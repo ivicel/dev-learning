@@ -122,6 +122,22 @@ public class LinkedListDeque<T> {
         return node.item;
     }
 
+    public T getRecursive(int index) {
+        if (index >= size) {
+            return null;
+        } 
+
+        return innerGet(index, head).item;
+    }
+
+    private Node innerGet(int index, Node node) {
+        if (index == 0) {
+            return node;
+        } else {
+            return innerGet(--index, node.next);
+        }
+    }
+
     public class Node {
         private T item;
         private Node prev;
@@ -139,5 +155,6 @@ public class LinkedListDeque<T> {
             d.addLast(i);
         }
         d.printDeque();
+        System.out.println(d.getRecursive(3));
     }
 }

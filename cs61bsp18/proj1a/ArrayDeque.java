@@ -82,14 +82,22 @@ public class ArrayDeque<T> {
     }
 
     private void trimToSize() {
+        // decrease size of array if there is a big array but little data
+        // or when data locate 90%, increase size of array
         boolean renew = false;
-        if (nodes.length <= 16) {
+        float multiple;
+        if (size / nodes.length - 0.1 < 0.001) {
+            multiple = 0.25f;
+            renew = true;
+        } else if (nodes.length <= 16) {         
             renew = (size == nodes.length) || (size / nodes.length - 0.9) > 0.001;
+            multiple = 1.5f;
         } else {
             renew = (size / nodes.length - 0.75) > 0.001;
+            multiple = 2.0f;
         }
+
         if (renew) {
-            float multiple = nodes.length > 1000 ? 1.5f : 2;
             int len = (int) (nodes.length * multiple);
             T[] newTs = (T[]) new Object[len];
             for (int i = 0; i < size; i++) {

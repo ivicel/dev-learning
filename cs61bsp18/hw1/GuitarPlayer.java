@@ -1,4 +1,5 @@
-import edu.princeton.cs.algs4.StdAudio;
+// import edu.princeton.cs.algs4.StdAudio;
+import edu.princeton.cs.introcs.StdAudio;
 import synthesizer.GuitarString;
 
 import javax.sound.midi.InvalidMidiDataException;

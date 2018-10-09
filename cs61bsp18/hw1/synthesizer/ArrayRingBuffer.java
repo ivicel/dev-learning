@@ -1,10 +1,12 @@
 // TODO: Make sure to make this class a part of the synthesizer package
-// package <package name>;
+package synthesizer;
 import java.util.Iterator;
+
+import synthesizer.AbstractBoundedQueue;
 
 //TODO: Make sure to make this class and all of its methods public
 //TODO: Make sure to make this class extend AbstractBoundedQueue<t>
-public class ArrayRingBuffer<T>  {
+public class ArrayRingBuffer<T> extends AbstractBoundedQueue<T> {
     /* Index for the next dequeue or peek. */
     private int first;            // index for the next dequeue or peek
     /* Index for the next enqueue. */
@@ -21,6 +23,9 @@ public class ArrayRingBuffer<T>  {
         //       this.capacity should be set appropriately. Note that the local variable
         //       here shadows the field we inherit from AbstractBoundedQueue, so
         //       you'll need to use this.capacity to set the capacity.
+        first = last = fillCount = 0;
+        this.capacity = capacity;
+        rb = (T[]) new Object[capacity];
     }
 
     /**
@@ -30,6 +35,12 @@ public class ArrayRingBuffer<T>  {
      */
     public void enqueue(T x) {
         // TODO: Enqueue the item. Don't forget to increase fillCount and update last.
+        if (isFull()) {
+            throw new RuntimeException("Ring Buffer Overflow, buffer is full");
+        }
+        rb[last++] = x;
+        fillCount++;
+        last = last % capacity;
     }
 
     /**
@@ -39,6 +50,14 @@ public class ArrayRingBuffer<T>  {
      */
     public T dequeue() {
         // TODO: Dequeue the first item. Don't forget to decrease fillCount and update 
+        if (isEmpty()) {
+            throw new RuntimeException("Ring Buffer Underflow, buffer is empty");
+        }
+        T t = rb[first];
+        fillCount--;
+        rb[first++] = null;
+        first = first % capacity;
+        return t;
     }
 
     /**
@@ -46,7 +65,42 @@ public class ArrayRingBuffer<T>  {
      */
     public T peek() {
         // TODO: Return the first item. None of your instance variables should change.
+        if (!isEmpty()) {
+            return rb[first];
+        }
+        return null;
     }
 
     // TODO: When you get to part 5, implement the needed code to support iteration.
+
+    public Iterator<T> iterator() {
+        return new RingBufferIterator();
+    }
+
+    private class RingBufferIterator implements Iterator<T> {
+        private int pos;
+
+        public RingBufferIterator() {
+            pos = first;
+        }
+
+        public boolean hasNext() {
+            if (isEmpty()) {
+                return false;
+            }
+
+            int p = pos % capacity;
+            if (isFull() && pos > last && p == last) {
+                return false;
+            }
+
+            return true;
+        }
+
+        public T next() {
+            T t = rb[pos % capacity];
+            pos++;
+            return t;
+        }
+    }    
 }

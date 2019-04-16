@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <div th:fragment="comment(comments)">
+        <div class="comment-container">
+            <div class="comment-avatar">
+                <img th:src="@{//gravatar.loli.net/avatar/none(s=256,
+                    d=(${option['native_comment_avatar']}?: 'mm'))}" class="comment-author-avatar">
+            </div>
+            <div class="comment-wrap">
+                <div class="comment-header">
+                    <input type="hidden" name="postId" value="${post.postId?c}">
+                    <input type="hidden" name="commentParent" id="commentParent" value="0">
+                    <input type="text" class="comment-input comment-input-who" name="commentAuthor" id="commentAuthor"
+                           placeholder="昵称(必填)">
+                    <input type="text" class="comment-input comment-input-email" name="commentAuthorEmail"
+                           id="commentAuthorEmail" onblur="loadAvatar()" placeholder="邮箱(选填)">
+                    <input type="text" class="comment-input comment-input-website" name="commentAuthorUrl"
+                           id="commentAuthorUrl" placeholder="网址(选填)">
+                </div>
+                <div class="comment-content">
+                    <textarea class="comment-input-content" name="commentContent" id="commentContent"
+                              th:placeholder="${option['native_comment_placeholder']}?: '赶快评论一个吧!'"></textarea>
+                    <div class="OwO"></div>
+                </div>
+                <div class="comment-footer">
+                    <button type="button" class="comment-cancel-reply" id="comment-cancel-reply" style="display: none;">
+                        取消回复
+                    </button>
+                    <button type="button" class="comment-submit" id="comment-submit">提交</button>
+                </div>
+            </div>
+            <div class="comment-message" style="text-align: center;padding: 20px;display: none"></div>
+            <div class="comment-info">
+                <span id="comment-info-total" style="font-weight: 600" th:text="${commentsCount}?: 0"></span>评论
+            </div>
+
+            <ul class="comment-list" id="comments-list" th:unless="${comments eq null and
+                comments.getPageList().isEmpty()}">
+                <li th:each="comment : ${comments.getPageList()}"
+                    class="comment-list-one" th:id="'comment-id-' + ${comment.commentId}?: 'c'">
+                    <img class="comment-list-one-img" th:src="'//gravatar.loli.net/avatar/' +
+                    ${comment.commentAuthorAvatarMd5}?:'defaultAvatar' + '?s=256&d=' +
+                    ${option['native_comment_avatar']?: 'mm'}">
+                    <section>
+                        <div class="comment-list-one-head">
+                            <a class="comment-list-one-head-name" rel="nofollow"
+                               th:href="${comment.commentAuthorUrl}?:'#'" th:text="${comment.commentAuthor}"></a>
+                            <span class="comment-ua-info" style="display: none"
+                                  th:text="${comment.commentAgent}"></span>
+                            <label th:if="${comment.isAdmin eq 1}" class="comment-list-one-head-admin">博主</label>
+                        </div>
+                        <div class="comment-list-one-content">
+                            <p th:text="${comment.commentContent}"></p>
+                        </div>
+                        <div class="comment-list-one-footer">
+                        <span class="comment-list-one-footer-time"
+                              th:text="${#dates.format(comment.commentDate, 'yyyy-MM-dd HH:mm')}"></span>
+                            <span th:at="${comment.commentId}?:'c'" class="comment-list-one-footer-reback">
+                                回复
+                            </span>
+                        </div>
+                    </section>
+                    <div th:unless="${#lists.isEmpty(comment.childComments)}"
+                         th:replace="~{common/comment_entry :: childCommentEntry(${comment.childComments})}"></div>
+                </li>
+            </ul>
+        </div>
+
+        <div class="native-nav" id="comment-nav" th:if="${comments.totalPage gt 1}">
+            <ol class="page-nav">
+                <li th:if="${comments.hasPrevious}">
+                    <a th:href="@{#comments-list(cp=comments.nowPage-1)}" title="上一页">←</a>
+                </li>
+                <li th:each="r : ${rainbow}">
+                    <a th:if="${r eq comments.nowPage}" th:text="${r}"
+                       href="?cp=${comments.nowPage}#comments-list" style="color: red;"></a>
+                    <a th:if="${r ne comments.nowPage}" th:text="${r}" th:href="@{#comments-list(cp=r)}"></a>
+                </li>
+                <li th:if="${comments.hasNext}">
+                    <a th:href="@{#comments-list(cp=comments.nowPage+1)}" title="下一页">→</a>
+                </li>
+            </ol>
+        </div>
+    </div>
+</body>
+</html>

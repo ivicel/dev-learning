@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/module/head :: head(~{::title}, ~{::link}, ~{::style})}">
+    <title th:text="${option['blog_title']}?:'' + ' | ' + #{admin.themes.title}"></title>
+    <link rel="stylesheet" th:href="@{/static/halo-backend/plugins/fileinput/fileinput.min.css}">
+    <style type="text/css" rel="stylesheet">
+        .theme-thumbnail {
+            width: 100%;
+            height: 0;
+            padding-bottom: 60%;
+            overflow: hidden;
+            border-top-left-radius: 3px;
+            border-top-right-radius: 3px;
+            border-bottom-right-radius: 0;
+            border-bottom-left-radius: 0;
+            background-position: center;
+            -webkit-background-size: cover;
+            -moz-background-size: cover;
+            background-size: cover;
+            cursor: pointer;
+            transition: all .2s ease-in-out;
+        }
+
+        .box-footer {
+            padding: 5px;
+        }
+
+        .theme-title {
+            font-size: 18px;
+            line-height: 30px;
+        }
+
+        .btn-delete:hover {
+            color: red;
+        }
+    </style>
+
+</head>
+<body class="hold-transition sidebar-mini"
+      th:classappend="${option['admin_theme']?:'skin-blue'} + ' ' + ${option['admin_layout']?:''} + ' ' +
+    ${option['sidebar_style']?:''}">
+    <div th:replace="~{admin/module/header :: header}"></div>
+    <div th:replace="~{admin/module/sidebar :: sidebar}"></div>
+
+    <div class="content-wrapper">
+        <section class="content-header" id="animated-header">
+            <h1 style="display: inline-block;">[[#{admin.themes.title}]]</h1>
+            <a class="btn-header" id="showForm" href="javascript:void(0)"
+               th:attr="data-url=@{/admin/themes/install}, data-msg=#{admin.themes.js.install-theme}">
+                <i class="fa fa-cloud-upload" aria-hidden="true"></i>[[#{admin.themes.btn.install}]]
+            </a>
+            <ol class="breadcrumb">
+                <li><a data-pjax="true" th:href="@{/admin}"><i class="fa fa-dashboard"></i>
+                    [[#{admin.index.bread.index}]]</a></li>
+                <li><a data-pjax="true" href="javascript:void(0)">[[#{admin.themes.bread.appearance}]]</a></li>
+                <li class="active">[[#{admin.themes.title}]]</li>
+            </ol>
+        </section>
+        <section class="content container-fluid" id="animated-content">
+            <div class="row">
+                <div class="col-md-6 col-lg-3 col theme-body" th:each="theme : ${themes}">
+                    <div class="box box-solid">
+                        <div class="box-body theme-thumbnail"
+                             th:style="'background-image: url(' + @{/${theme.themeName}/screenshot.png} + ')'">
+                            <div class="pull-right btn-delete" style="display: none"
+                                 th:attr="data-url=@{/admin/themes/remove(themeName=${theme.themeName})}">
+                                <i class="fa fa-times fa-lg" aria-hidden="true"></i></div>
+                        </div>
+                        <div class="box-footer">
+                            <span class="theme-title">[[${theme.themeName}]]</span>
+                            <button class="btn btn-primary btn-sm pull-right btn-theme-setting"
+                                    th:if="${theme.isHasOptions()}"
+                                    th:attr="data-url=@{/admin/themes/option(theme=${theme.themeName},
+                            hasUpdate=${theme.isHasUpdate()})},
+                            data-msg=${theme.themeName} + ' ' + #{admin.themes.js.theme-setting}"
+                                    style="display: none">[[#{admin.themes.btn.setting}]]
+                            </button>
+
+                            <button class="btn btn-default btn-sm pull-right btn-theme-enable"
+                                    th:if="${activeTheme ne theme.themeName}"
+                                    th:attr="data-theme=${theme.themeName}"
+                                    style="display: none;margin-right: 3px">[[#{admin.themes.btn.enable}]]
+                            </button>
+
+                            <button class="btn btn-default btn-sm pull-right btn-theme-enable"
+                                    th:if="${activeTheme eq theme.themeName}"
+                                    style="display: none;margin-right: 3px" disabled>[[#{admin.themes.btn.activated}]]
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div th:if="${#lists.isEmpty(themes)}" class="col-md-12">
+                    <h2>[[#{common.text.no-data}]]</h2>
+                </div>
+
+            </div>
+        </section>
+        <!-- 删除确认弹出层 -->
+        <div class="modal fade" id="removeThemeModal">
+            <div class="modal-dialog">
+                <div class="modal-content message_align">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">×</span></button>
+                        <h4 class="modal-title">[[#{common.text.tips}]]</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p id="message">[[#{common.text.define-delete}]]</p>
+                    </div>
+                    <div class="modal-footer">
+                        <input type="hidden" id="url"/>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">[[#{common.btn.cancel}]]
+                        </button>
+                        <a onclick="removeIt()" class="btn btn-danger" data-dismiss="modal">[[#{common.btn.define}]]</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <th:block th:inline="javascript" th:replace="~{admin/module/footer :: scriptEntry(~{::script})}">
+        <script type="application/javascript" th:inline="javascript">
+            let halo = new $.halo();
+            /**
+             * 设置主题
+             * @param site_theme 主题名
+             */
+            function setTheme(site_theme) {
+                $.get('/admin/themes/set', {'siteTheme': site_theme}, function (data) {
+                    if (data.code === 1) {
+                        halo.showMsgAndRedirect(data.msg, 'success', 1000, '/admin/themes',
+                            "${option.admin_pjax!'true'}");
+                    } else {
+                        halo.showMsg(data.msg, 'error', 2000);
+                    }
+                }, 'JSON');
+            }
+
+            var themeThumbnail = $('.theme-thumbnail');
+            var themeBody = $('.theme-body');
+
+            themeThumbnail.mouseover(function () {
+                $(this).children('.btn-delete').show();
+            });
+            themeThumbnail.mouseleave(function () {
+                $(this).children('.btn-delete').hide();
+            });
+            themeBody.mouseover(function () {
+                $(this).find(".theme-thumbnail").css("opacity", "0.8");
+                $(this).find(".btn-theme-setting,.btn-theme-enable,.btn-theme-update").show();
+            });
+            themeBody.mouseleave(function () {
+                $(this).find(".theme-thumbnail").css("opacity", "1");
+                $(this).find(".btn-theme-setting,.btn-theme-enable,.btn-theme-update").hide();
+            });
+
+            function modelShow(url) {
+                $('#url').val(url);
+                $('#removeThemeModal').modal();
+            }
+
+            function removeIt() {
+                var url = $.trim($("#url").val());
+                pjax.loadUrl(url);
+            }
+
+
+            $('#showForm').click(function () {
+                halo.layerModal($(this).data('url'), $(this).data('msg'));
+            });
+            $('.btn-theme-setting').click(function () {
+                halo.layerModal($(this).data('url'), $(this).data('msg'));
+            });
+
+        </script>
+
+    </th:block>
+</body>
+</html>

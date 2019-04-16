@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <head>
+        <title>分页</title>
+    </head>
+<body>
+    <th:block th:fragment="pagination(basePath, page)">
+    <div th:if="${not #lists.isEmpty(page.content) and page.totalPages gt 1}" class="pagination">
+        <ul class="clearfix">
+            <th:block th:if="${page.hasPrevious()}">
+                <li th:if="${page.number eq 1}" class="pre pagbuttons">
+                    <a class="btn" role="navigation" th:href="@{{basePath}(basePath=(${basePath eq ''}? '/' : ${basePath}))}">
+                        上一页
+                    </a>
+                </li>
+                <li th:if="${page.number ne 1}" class="pre pagbuttons">
+                    <a class="btn" role="navigation"
+                       th:href="@{{basePath}/page/{num}(basePath=${basePath}, num=${page.number})}">上一页</a>
+                </li>
+            </th:block>
+            <li th:if="${page.hasNext()}" class="next pagbuttons">
+                <a class="btn" role="navigation" th:href="@{{basePath}/page/{num}(basePath=${basePath},
+                        num=${page.number+2})}">下一页</a>
+            </li>
+        </ul>
+    </div>
+    </th:block>
+</body>
+</html>

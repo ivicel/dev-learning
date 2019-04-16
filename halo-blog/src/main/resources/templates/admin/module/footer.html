@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<th:block th:fragment="scriptEntry(scripts)">
+    <script th:src="@{/static/halo-common/jquery/jquery.min.js}"></script>
+    <script th:src="@{/static/halo-backend/plugins/bootstrap/js/bootstrap.min.js}"></script>
+    <script th:src="@{/static/halo-backend/plugins/pace/pace.min.js}"></script>
+    <script th:src="@{/static/halo-backend/js/adminlte.min.js}"></script>
+    <script th:src="@{/static/halo-backend/plugins/toast/js/jquery.toast.min.js}"></script>
+    <script th:src="@{/static/halo-backend/plugins/layer/layer.js}"></script>
+    <script th:src="@{/static/halo-backend/plugins/fileinput/fileinput.min.js}"></script>
+    <!--/* 中文 locale */-->
+    <script th:if="${option['blog_locale']}?:'zh-CN'" th:src="@{/static/halo-backend/plugins/fileinput/zh.min.js}"></script>
+    <script th:if="${option['admin_pjax']}" th:src="@{/static/halo-backend/plugins/pjax/pjax.min.js}"></script>
+
+    <script th:src="@{/static/halo-backend/plugins/easymde/easymde.min.js}"></script>
+    <script th:src="@{/static/halo-backend/plugins/inline-attachment/codemirror-4.inline-attachment.min.js}"></script>
+    <script th:src="@{/static/halo-backend/plugins/datetimepicker/js/bootstrap-datetimepicker.min.js}"></script>
+    <script th:src="@{/static/halo-backend/plugins/datetimepicker/js/locales/bootstrap-datetimepicker.zh-CN.js}"></script>
+    <script th:src="@{/static/halo-backend/plugins/jquery-tageditor/jquery.tag-editor.min.js}"></script>
+    <script src="//cdnjs.loli.net/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <script th:src="@{/static/halo-common/OwO/OwO.min.js}"></script>
+    <script th:src="@{/static/halo-backend/js/halo.min.js}"></script>
+    <script th:inline="javascript">
+        $(document).ajaxStart(function() {Pace.restart();});
+
+        /*[# th:if="${option['admin_pjax']}" ]*/
+        var pjax = new Pjax({
+            elements: 'a[data-pjax=true]',
+            cacheBust: false,
+            debug: false,
+            selectors: ['title', '.content-wrapper', '#footer_script']
+        });
+        /*[/]*/
+        var heading = /*[[ #{common.text.tips} ]]*/ 'common.text.tips';
+    </script>
+    <script th:replace="${scripts}"></script>
+</th:block>
+</body>
+</html>

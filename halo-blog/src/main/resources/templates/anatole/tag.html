@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{anatole/module/head :: head(~{::meta}, ~{::title}, _, _)}">
+    <meta name="keywords" th:content="'tag,标签'+(${option['seo_keywords']}?:'Anatole')"/>
+    <meta name="description" th:content="${option['seo_desc']}?:'Anatole'"/>
+    <title>标签</title>
+</head>
+<body>
+    <div th:include="~{anatole/module/header :: header}"></div>
+    <div class="main">
+        <div th:replace="~{anatole/module/sidebar :: sidebar}"></div>
+        <div class="autopagerize_page_element">
+            <div class="main">
+                <div class="content" th:if="${not page.isEmpty()}">
+                    <div th:replace="~{anatole/module/post_entry :: postEntry(${page})}"></div>
+
+                    <th:block th:replace="~{anatole/module/pagination :: pagination('/tags/' + ${tag.tagUrl},
+                        ${page})}"/>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <th:block th:replace="~{anatole/module/footer :: footer(_)}"/>
+</body>
+</html>

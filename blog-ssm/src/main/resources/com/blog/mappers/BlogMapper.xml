@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.blog.dao.BlogDao">
+    <resultMap id="BlogResult" type="Blog">
+        <id column="id" property="id" />
+        <result column="title" property="title" />
+        <result column="summary" property="summary" />
+        <result column="releaseDate" property="releaseDate" />
+        <result column="clickHit" property="clickHit" />
+        <result column="replyHit" property="replyHit" />
+        <result column="content" property="content" />
+        <result column="keyWord" property="keyWord" />
+        <association column="typeId" property="blogType"
+            select="com.blog.dao.BlogTypeDao.findById"/>
+    </resultMap>
+
+    <select id="findById" resultMap="BlogResult">
+      SELECT * FROM `t_blog` WHERE id = #{id}
+    </select>
+
+
+    <select id="list" resultMap="BlogResult">
+        SELECT * FROM `t_blog`
+        <where>
+            <if test="title != null and title != ''">
+                AND title LIKE #{title}
+            </if>
+            <if test="typeId != null and typeId != ''">
+                AND typeId = #{typeId}
+            </if>
+            <if test="releaseDateStr != null and releaseDateStr != ''">
+                AND DATE_FORMAT(releaseDate, '%Y年%m月') = #{releaseDateStr}
+            </if>
+        </where>
+        ORDER BY releaseDate DESC
+        <if test="start != null and size != null">
+            LIMIT #{start}, #{size}
+        </if>
+    </select>
+
+    <select id="getTotal" resultType="long">
+        SELECT count(*) FROM `t_blog`
+    </select>
+
+    <insert id="add" parameterType="Blog">
+        INSERT INTO t_blog(title, summary, releaseDate, content, typeId, keyWord)
+        VALUES(#{title}, #{summary}, #{releaseDate}, #{content}, #{typeId}, #{keyWord})
+    </insert>
+
+</mapper>

@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header}">
+</head>
+<body>
+    <div th:replace="~{fragments/header :: nav}"></div>
+    <div class="container blog-content-container text-center">
+
+            <img th:src="@{/images/404.png}" alt="404 picture">
+    </div>
+    <div th:replace="~{fragments/footer :: footer}">...</div>
+</body>
+</html>

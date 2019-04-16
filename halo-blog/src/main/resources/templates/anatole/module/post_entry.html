@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<th:block th:fragment="postEntry(posts)">
+    <div th:each="post : ${posts}" class="post animated fadeInDown">
+        <div class="post-title">
+            <h3>
+                <a th:href="@{/archives/{url}(url=${post.postUrl})}" th:text="${post.postTitle}"></a>
+            </h3>
+        </div>
+        <div class="post-content">
+            <div class="p_part">
+                <p th:text="${post.postSummary} + '...'"></p>
+            </div>
+            <div class="p_part">
+                <p></p>
+            </div>
+        </div>
+        <div class="post-footer">
+            <div class="meta">
+                <div class="info">
+                    <i class="fa fa-sun-o"></i>
+                    <span th:text="${#dates.format(post.postDate, 'yyyy-MM-dd')}"
+                          class="date"></span>
+                    <i class="fa fa-comment-o"></i>
+                    <a th:href="@{'/archives/' + ${post.postUrl} + '#comment_widget'}">Comments</a>
+                    <th:block th:unless="${#lists.isEmpty(post.tags)}">
+                        <i class="fa fa-tag"></i>
+                        <a th:href="@{/tags/{url}(url=${tag.tagUrl})}" class="tag"
+                           th:each="tag : ${post.tags}">&nbsp;[[${tag.tagName}]]</a>
+                    </th:block>
+                </div>
+            </div>
+        </div>
+    </div>
+</th:block>
+</body>
+</html>

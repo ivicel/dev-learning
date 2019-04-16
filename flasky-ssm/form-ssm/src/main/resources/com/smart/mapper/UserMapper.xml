@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--<!DOCTYPE mapper-->
+    <!--PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"-->
+    <!--"http://mybatis.org/dtd/mybatis-3-mapper.dtd">-->
+<!--<mapper namespace="com.smart.dao.UserDao">-->
+    <!--<resultMap id="BaseResultMap" type="com.smart.domain.User">-->
+        <!--<id column="user_id" property="userId"/>-->
+        <!--<result column="user_name" property="userName"/>-->
+        <!--<result column="password" property="password"/>-->
+        <!--<result column="user_type" property="userType"/>-->
+        <!--<result column="locked" property="locked"/>-->
+        <!--<result column="credit" property="credit"/>-->
+        <!--<result column="last_visit" property="lastVisit"/>-->
+        <!--<result column="last_ip" property="lastIp"/>-->
+    <!--</resultMap>-->
+
+    <!--<select id="getUserByUserName" resultMap="BaseResultMap">-->
+        <!--SELECT * FROM `t_user` WHERE `user_name` = #{userName}-->
+    <!--</select>-->
+
+    <!--<select id="queryUsersByUserName" resultMap="BaseResultMap">-->
+        <!--SELECT * FROM-->
+    <!--</select>-->
+<!--</mapper>-->

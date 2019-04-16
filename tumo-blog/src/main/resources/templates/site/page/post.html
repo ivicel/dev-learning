@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{site/common/common_head :: commonHead(~{::title}, ~{::link})}">
+    <title th:text="${post.title}">博客文章标题......</title>
+    <link rel="stylesheet" th:href="@{/static/lib/css/default.min.css}">
+    <link rel="stylesheet" th:href="@{/static/css/index.css}">
+</head>
+<body gtools_scp_screen_capture_injected="true">
+    <div th:replace="~{site/header :: header}"></div>
+
+    <article class="main-content page-page" itemscope itemtype="http://schema.org/Article">
+        <!-- 文章头 -->
+        <div class="post-header">
+            <h1 class="post-title" itemprop="name headline">
+                <a th:href="@{/article/{id}(id=${post.id})}" th:text="${post.title}">文章标题</a>
+            </h1>
+            <div class="post-data">
+                <time datetime="2017-01-01" itemprop="datePublished">发表于
+                    [[${#dates.format(post.createTime, 'yyyy-MM-dd')}]]
+                </time> /
+                <a th:href="@{/category/{categoryId}(categoryId=${post.category.id})}"
+                    th:text="${post.category.name}">分类名链接</a> /
+                <a href="#comments"><b th:text="5">5</b> 评论</a> /
+                <b th:text="${post.eyeCount}">5</b> 浏览
+            </div>
+        </div>
+        <!-- 正文 -->
+        <div id="post-content" class="post-content" itemprop="articleBody" th:utext="${post.content}">
+            这是文章的正文.................
+        </div>
+        <div class="post-content">
+            <p class="post-info">
+                本文由 <a th:href="@{/}" th:text="${post.author}">作者名</a> 创作，采用
+                <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="external nofollow">知识共享署名4.0</a>
+                国际许可协议进行许可<br>
+                本站文章除注明转载/出处外，均为本站原创或翻译，转载前请务必署名<br>
+                最后编辑时间为: <span th:text="${#dates.format(post.editTime, 'yyyy-MM-dd')}">2017-01-01</span>
+            </p>
+        </div>
+    </article>
+
+    <!-- todo: 边栏导航 -->
+    <div id="directory-content" class="directory-content">
+        <div class="directory"></div>
+    </div>
+
+    <!-- todo: 留言 -->
+    <div class="comment-container">
+        <div id="comments" ref="comments">
+            <p>这里是留言.........</p>
+            <p>这里是留言.........</p>
+            <p>这里是留言.........</p>
+            <p>这里是留言.........</p>
+            <p>这里是留言.........</p>
+        </div>
+    </div>
+
+    <div th:replace="~{site/footer :: footer}"></div>
+    <th:block th:replace="~{site/common/onload_js :: onloadJS(~{::script})}">
+        <script type="text/javascript" th:src="@{/static/lib/js/highlight.min.js}"></script>
+    </th:block>
+</body>
+</html>

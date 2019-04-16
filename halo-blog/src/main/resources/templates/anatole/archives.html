@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{anatole/module/head :: head(~{::meta}, ~{::title}, _, _)}">
+    <meta name="keywords" th:content="'文章归档,'+(${option['seo_keywords']}?:'Anatole')"/>
+    <meta name="description" th:content="${option['seo_desc']}?:'Anatole'"/>
+    <title>归档</title>
+</head>
+<body>
+    <div th:include="~{anatole/module/header :: header}"></div>
+    <div class="main">
+        <div th:replace="~{anatole/module/sidebar :: sidebar}"></div>
+        <div class="autopagerize_page_element">
+            <div class="content" th:if="${not #lists.isEmpty(archives.content)}">
+                <div class="archive animated fadeInDown">
+                    <ul class="list-with-title">
+                        <th:block th:each="archive : ${archives}">
+                            <div class="listing-title">
+                                <span th:text="${archive.year}"></span>
+                                <span th:if="${archive.month}" th:text="'- ' + ${archive.month}"></span>
+                            </div>
+                            <ul class="listing">
+                                <div class="listing-item" th:each="post : ${archive.posts}">
+                                    <div class="listing-post">
+                                        <a th:href="@{/archives/{url}(url=${post.postUrl})}"
+                                           th:title="${post.postTitle}" th:text="${post.postTitle}"></a>
+                                        <div class="post-time">
+                                        <span class="date"
+                                              th:text="${#dates.format(post.postDate, 'yyyy-MM-dd')}"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </ul>
+                        </th:block>
+                    </ul>
+                </div>
+                <th:block th:replace="~{anatole/module/pagination :: pagination('/archives', ${archives})}"/>
+            </div>
+        </div>
+    </div>
+    <th:block th:replace="~{anatole/module/footer :: footer(_)}"/>
+</body>
+</html>

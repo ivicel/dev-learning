@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<th:block th:fragment="footer(scripts)" th:inline="javascript">
+    <script type="text/javascript" th:src="@{/anatole/source/js/jquery.min.js}"></script>
+    <th:block th:replace="${scripts}"/>
+    <script type="text/javascript">
+        var url = location.href;
+        var urlstatus = false;
+        $(".nav li a").each(function () {
+            if ((url + '/').indexOf($(this).attr('href')) > -1 && $(this).attr('href') != '/') {
+                $(this).addClass('current');
+                urlstatus = true;
+            } else {
+                $(this).removeClass('current');
+            }
+        });
+        if (!urlstatus) {
+            $(".nav li a").eq(0).addClass('current');
+        }
+
+        /*[# th:if="${option['anatole_style_hitokoto']}" ]*/
+        var xhr = new XMLHttpRequest();
+        xhr.open('get', 'https://v1.hitokoto.cn');
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4) {
+                var data = JSON.parse(xhr.responseText);
+                var yiyan = document.getElementById('yiyan');
+                yiyan.innerText = data.hitokoto+"        -「"+data.from+"」";
+            }
+        };
+        xhr.send();
+        /*[/]*/
+    </script>
+    <!--/* 统计代码  */-->
+    <script th:text="${option['statistics_code']}"></script>
+
+</th:block>
+</body>
+</html>

@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/module/head :: head(~{::title}, ~{::link}, ~{::style})}">
+    <title th:text="${option['blog_title']}?:'' + ' | ' + #{admin.posts.edit.title}"></title>
+    <link rel="stylesheet" th:href="@{/static/halo-backend/plugins/easymde/easymde.min.css}">
+    <link rel="stylesheet" th:href="@{/static/halo-backend/plugins/jquery-tageditor/jquery.tag-editor.css}">
+    <link rel="stylesheet"
+          th:href="@{/static/halo-backend/plugins/datetimepicker/css/bootstrap-datetimepicker.min.css}">
+    <style type="text/css">
+        #postTitle {
+            font-weight: 400;
+        }
+    </style>
+
+</head>
+<body class="hold-transition sidebar-mini"
+      th:classappend="${option['admin_theme']?:'skin-blue'} + ' ' + ${option['admin_layout']?:''} + ' ' +
+    ${option['sidebar_style']?:''}">
+    <div th:replace="~{admin/module/header :: header}"></div>
+    <div th:replace="~{admin/module/sidebar :: sidebar}"></div>
+
+    <div class="content-wrapper">
+        <section class="content-header" id="animated-header">
+            <h1 style="display: inline-block;">[[#{admin.posts.edit.title}]]</h1>
+            <a class="btn-header" id="btnOpenAttach" href="javascript:void(0)"
+               th:attr="data-url=@{/admin/attachments/select(type=post)}, data-title=#{common.js.all-attachment}"
+               th:text="#{admin.editor.btn.attachs}">
+            </a>
+            <ol class="breadcrumb">
+                <li>
+                    <a data-pjax="true" href="javascript:void(0)"><i class="fa fa-dashboard"></i>
+                        [[#{admin.index.bread.index}]]</a>
+                </li>
+                <li>
+                    <a data-pjax="true" th:href="@{/admin/posts}" th:text="#{admin.posts.title}"></a>
+                </li>
+                <li class="active" th:text="#{admin.posts.edit.title}"></li>
+            </ol>
+        </section>
+        <section class="content" id="animated-content">
+            <div class="row">
+                <div class="col-md-9">
+                    <input type="hidden" id="postId" name="postId" th:value="${post.postId}">
+                    <div style="margin-bottom: 10px;">
+                        <input type="text" class="form-control input-lg" id="postTitle" name="postTitle"
+                               th:placeholder="#{admin.posts.edit.form.title.placeholder}"
+                               onblur="autoComplateUrl();" th:value="${post.postTitle}" autocomplete="off">
+                    </div>
+                    <div style="display: block;margin-bottom: 10px;">
+                    <span>
+                        [[#{admin.editor.form.url}]]
+                        <a href="javascript:void(0)">
+                            [[${#request.serverName} + (${#request.serverPort} ne 80 ?
+                            (':' + ${#request.serverPort})) + @{/archive}]]/
+                            <span id="postUrl" th:data-post-id="${post.postId}">[[${post.postUrl}]]</span>/
+                        </a>
+                        <button class="btn btn-default btn-sm " id="btn_input_postUrl"
+                                th:text="#{common.btn.edit}"></button>
+                        <button class="btn btn-default btn-sm " id="btn_change_postUrl" onclick="urlOnBlurAuto()"
+                                style="display: none;"
+                                th:text="#{common.btn.define}"></button>
+                    </span>
+                    </div>
+                    <div class="box box-primary">
+                        <!-- Editor.md编辑器 -->
+                        <div class="box-body pad">
+                            <div id="markdown-editor">
+                                <textarea id="editorarea" style="display:none;"
+                                          th:utext="${post.postContentMd}"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="box box-primary">
+                        <div class="box-header with-border">
+                            <h3 class="box-title" th:text="#{admin.editor.text.push}"></h3>
+                            <div class="box-tools">
+                                <button type="button" class="btn btn-box-tool" data-widget="collapse"
+                                        data-toggle="tooltip" title="Collapse">
+                                    <i class="fa fa-minus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="box-body">
+                            <div class="form-group">
+                                <label for="allowComment" class="control-label"
+                                       th:text="#{admin.editor.allow-comment}"></label>
+                                <select class="form-control" id="allowComment" name="allowComment">
+                                    <option value="1" th:selected="${post.allowComment eq 1}"
+                                            th:text="#{common.select.yes}"></option>
+                                    <option value="0" th:selected="${post.allowComment eq 0}"
+                                            th:text="#{common.select.no}"></option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="postPassword" class="control-label"
+                                       th:text="#{admin.editor.post.password}"></label>
+                                <input type="password" class="form-control" id="postPassword" name="postPassword"
+                                       th:value="${post.postPassword}" autocomplete="off">
+                            </div>
+                            <div class="form-group">
+                                <label for="postDate" class="control-label" th:text="#{admin.editor.post.date}"></label>
+                                <input type="text" class="form-control" id="postDate" name="postDate"
+                                       th:value="${#dates.format(post.postDate, 'yyyy-MM-dd HH:mm')}">
+                            </div>
+                        </div>
+                        <div class="box-footer">
+                            <button onclick="push(1)" class="btn btn-default btn-sm "
+                                    th:text="#{admin.editor.save-draft}"></button>
+                            <button onclick="push(0)" class="btn btn-primary btn-sm pull-right "
+                                    th:data-loading-text="#{admin.editor.btn.pushing}"
+                                    th:text="#{admin.editor.btn.update}">
+                            </button>
+                        </div>
+                    </div>
+                    <div class="box box-primary">
+                        <div class="box-header with-border">
+                            <h3 class="box-title" th:text="#{admin.editor.text.category}"></h3>
+                            <div class="box-tools">
+                                <button type="button" class="btn btn-box-tool" data-widget="collapse" title="Collapse">
+                                    <i class="fa fa-minus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="box-body" style="display: block">
+                            <div class="form-group">
+                                <ul style="list-style: none;padding: 0;margin: 0;">
+                                    <li style="padding: 0;margin: 0;list-style: none" th:each="cate : ${categories}">
+                                        <div class="pretty p-default">
+                                            <input name="categories" id="categories" type="checkbox"
+                                                   class="minimal" th:value="${cate.cateId}"
+                                                   th:checked="${#lists.contains(post.categories, cate)}">
+                                            <div class="state p-primary">
+                                                <label th:text="${cate.cateName}"></label>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="box box-primary">
+                        <div class="box-header with-border">
+                            <h3 class="box-title" th:text="#{admin.editor.text.tag}"></h3>
+                            <div class="box-tools">
+                                <button type="button" class="btn btn-box-tool" data-widget="collapse" title="Collapse">
+                                    <i class="fa fa-minus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="box-body">
+                            <input type="text" class="form-control input-lg" id="tagList" name=""/><br>
+                            <select class="form-control" id="chooseTag" name="chooseTag">
+                                <th:block th:unless="${#lists.isEmpty(tags)}">
+                                    <option th:value="#{admin.editor.select.tag.default}"></option>
+                                    <option th:value="|${tag.tagName}(${#lists.size(tag.posts)})|"
+                                            th:each="tag : ${tags}"></option>
+                                </th:block>
+
+                                <option th:if="${#lists.isEmpty(tags)}" th:value="#{common.text.no-data}"></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="box box-primary">
+                        <div class="box-header with-border">
+                            <h3 class="box-title" th:text="#{admin.editor.text.thumbnail}"></h3>
+                            <div class="box-tools">
+                                <button type="button" class="btn btn-box-tool" data-widget="collapse"
+                                        data-toggle="tooltip" title="Collapse">
+                                    <i class="fa fa-minus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="box-body">
+                            <div>
+                                <img th:src="${#servletContext.contextPath} + (${post.postThumbnail}?:
+                '/static/halo-frontend/images/thumbnail/thumbnail.png')"
+                                     class="img-responsive img-thumbnail" id="selectImg"
+                                     th:attr="data-url=@{/admin/attachments/select(id=selectImg)}"
+                                     th:data-title="#{common.js.all-attachment}" style="cursor: pointer;">
+                            </div>
+                        </div>
+                        <div class="box-footer">
+                            <button onclick="removeThumbnail()" class="btn btn-default btn-sm "
+                                    th:text="#{common.btn.remove}"></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <th:block th:replace="~{admin/module/footer :: scriptEntry(~{::script})}">
+        <script type="application/javascript" id="footer_script" th:inline="javascript">
+            $('#postDate').datetimepicker({
+                format: 'yyyy-mm-dd hh:ii',
+                language: 'zh-CN',
+                weekStart: 1,
+                todayBtn: 1,
+                autoclose: 1
+            });
+            MathJax.Hub.Config({
+                showProcessingMessages: false,
+                messageStyle: "none",
+                tex2jax: {
+                    inlineMath: [
+                        ['$', '$'],
+                        ["\\(", "\\)"]
+                    ],
+                    displayMath: [
+                        ['$$', '$$'],
+                        ["\\[", "\\]"]
+                    ],
+                    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code', 'a']
+                }
+            });
+            let QUEUE = MathJax.Hub.queue;
+
+            /**
+             * 加载编辑器
+             */
+            let easyMDE = new EasyMDE({
+                element: document.getElementById("editorarea"),
+                autoDownloadFontAwesome: false,
+                autofocus: true,
+                autosave: {
+                    enabled: true,
+                    uniqueId: "editor-temp-${post.postId?c}",
+                    delay: 10000
+                },
+                renderingConfig: {
+                    codeSyntaxHighlighting: true
+                },
+                previewRender: function (plainText) {
+                    let preview = document.getElementsByClassName("editor-preview-side")[0];
+                    preview.innerHTML = this.parent.markdown(plainText);
+                    preview.setAttribute('id', 'editor-preview');
+                    MathJax.Hub.Queue(["Typeset", MathJax.Hub, "editor-preview"]);
+                    return preview.innerHTML;
+                },
+                showIcons: ["code", "table"],
+                status: ["autosave", "lines", "words"],
+                tabSize: 4
+            });
+
+            let $postUrl = $('#postUrl');
+            /**
+             * 方法来自https://gitee.com/supperzh/zb-blog/blob/master/src/main/resources/templates/article/publish.html#L255
+             */
+            $(function () {
+                inlineAttachment.editors.codemirror4.attach(easyMDE.codemirror, {
+                    progressText: "![上传中...]()",
+                    uploadUrl: /*[[@{/admin/attachments/upload}]]*/''
+                });
+            });
+
+            let tagList = $('#tagList');
+
+            /**
+             * 初始化标签
+             */
+            tagList.tagEditor({
+                delimiter: ',',
+                placeholder: /*[[#{admin.posts.edit.form.tag.placeholder}]]*/ '',
+                forceLowercase: false
+            });
+
+            /**
+             * 加载该文章已有的标签
+             */
+
+            /*[# th:unless="${#lists.isEmpty(post.tags)}" th:each="tag : ${post.tags}" ]*/
+            tagList.tagEditor('addTag', /*[[${tag.tagName}]]*/'');
+            /*[/]*/
+
+            $('#chooseTag').change(function () {
+                tagList.tagEditor('addTag', $(this).val());
+            });
+
+            /**
+             * 自动填充路径，并且将汉字转化成拼音以-隔开
+             */
+            function autoComplateUrl() {
+                let titleVal = $("#postTitle");
+                if (titleVal.val() !== "" && titleVal.val() !== null && postUrl.html() === '') {
+                    $postUrl.html(new Date().getTime());
+                }
+            }
+
+            /**
+             * 检测是否已经存在该链接
+             * @constructor
+             */
+            function urlOnBlurAuto() {
+                let newPostUrl = $('#newPostUrl');
+                if (newPostUrl.val() === "") {
+                    halo.showMsg(/*[[#{admin.editor.js.no-url}]]*/"", 'info', 2000);
+                    return;
+                }
+                $.get('./checkUrl', {
+                    'postUrl': newPostUrl.val(),
+                    'postId': $postUrl.data('post-id')
+                }, function (data) {
+                    if (data.code === 0) {
+                        halo.showMsg(data.msg, 'error', 2000);
+                    } else {
+                        $postUrl.html(newPostUrl.val());
+                        $('#btn_change_postUrl').hide();
+                        $('#btn_input_postUrl').show();
+                    }
+                }, 'JSON');
+            }
+
+            $('#btn_input_postUrl').click(function () {
+                let postUrl = $("#postUrl");
+                postUrl.html(
+                        "<input type='text' id='newPostUrl' onblur='urlOnBlurAuto()' value='" + postUrl.html() + "'>");
+                $(this).hide();
+                $('#btn_change_postUrl').show();
+            });
+
+            /**
+             * 提交文章
+             * @param status 文章状态
+             */
+            function push(status) {
+                let postTitle = $("#postTitle");
+                let cateList = [];
+                if (!postTitle.val()) {
+                    halo.showMsg(/*[[#{admin.editor.js.no-title}]]*/'', 'info', 2000);
+                    return;
+                }
+                if (!$postUrl.html()) {
+                    halo.showMsg(/*[[#{admin.editor.js.no-url}]]*/'', 'info', 2000);
+                    return;
+                }
+                $('input[name="categories"]:checked').each(function () {
+                    cateList.push($(this).val());
+                });
+                $.post('./update', {
+                    'postId': $('#postId').val(),
+                    'postStatus': status,
+                    'postTitle': postTitle.val(),
+                    'postUrl': $postUrl.html().toString(),
+                    'postContentMd': easyMDE.value(),
+                    'postThumbnail': $('#selectImg').attr('src'),
+                    'cateList': cateList.toString(),
+                    'tagList': $('#tagList').tagEditor('getTags')[0].tags.toString(),
+                    'allowComment': $('#allowComment').val(),
+                    'postDate': $("#postDate").val(),
+                    'postPassword': $("#postPassword").val()
+                }, function (data) {
+                    if (data.code === 1) {
+                        //清除自动保存的内容
+                        easyMDE.toTextArea();
+                        easyMDE = null;
+                        halo.showMsgAndRedirect(data.msg, 'success', 1000, /*[[@{/admin/posts}]]*/'/admin/posts',
+                                "${option.admin_pjax!'true'}");
+                    } else {
+                        halo.showMsg(data.msg, 'error', 2000);
+                    }
+                }, 'JSON')
+            }
+
+            function removeThumbnail() {
+                $("#selectImg").attr("src",/*[[@{/static/halo-frontend/images/thumbnail/thumbnail.png}]]*/"");
+            }
+
+            $('#btnOpenAttach').on('click', function (event) {
+                halo.layerModal($(this).data('url'), $(this).data('title'));
+            })
+        </script>
+    </th:block>
+
+</body>
+</html>

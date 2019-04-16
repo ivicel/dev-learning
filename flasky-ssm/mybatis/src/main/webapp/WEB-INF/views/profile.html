@@ -1,0 +1,20 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>Spitter</title>
+    <link rel="stylesheet" th:href="@{/resources/style.css}">
+</head>
+<body>
+    <div id="header" th:include="page :: header"></div>
+
+    <div id="content">
+
+        <h1>Your Profile</h1>
+        <span th:text="${spitter.username}"></span>
+        <span th:text="${spitter.firstName}"></span>
+        <span th:text="${spitter.lastName}"></span>
+        <span th:text="${spitter.email}"></span>
+    </div>
+    <div id="footer" th:include="page :: copy"></div>
+</body>
+</html>

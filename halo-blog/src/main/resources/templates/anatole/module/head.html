@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head(meta, title, links, style)">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+    <title th:replace="${title}">Anatole 主题模版</title>
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="renderer" content="webkit">
+    <meta name="theme-color" th:content="${option['anatole_style_google_color']}?: '#fff'">
+    <meta name="author" th:if="${user}" th:content="${user.userDisplayName}" />
+    <meta name="keywords" th:replace="${meta}"/>
+    <meta name="google-site-verification" th:if="${option['blog_verification_google']}"
+          th:content="${option.blog_verification_google}" />
+    <meta name="msvalidate.01" th:if="${option['blog_verification_bing']}"
+          th:content="${option.blog_verification_bing}" />
+    <meta name="baidu-site-verification" th:if="${option['blog_verification_baidu']}"
+          th:content="${option.blog_verification_baidu}" />
+    <meta name="360-site-verification" th:if="${option['blog_verification_qihu']}"
+          th:content="${option.blog_verification_qihu}" />
+    <link rel="shortcut icon" type="images/x-icon" th:if="${option['blog_favicon']}"
+          th:href="${option.blog_favicon}">
+    <link th:replace="${links}" type="text/css" rel="stylesheet"/>
+    <link th:href="@{/anatole/source/css/font-awesome.min.css}" type="text/css" rel="stylesheet"/>
+    <link rel="stylesheet" th:href="@{/anatole/source/css/blog_basic.min.css}">
+    <link th:href="@{/anatole/source/css/style.min.css}" type="text/css" rel="stylesheet" />
+    <link rel="alternate" type="application/rss+xml" title="atom 1.0" th:href="@{/feed.xml}">
+    <style th:replace="${style}"></style>
+    <style th:inline="css">
+        /*[# th:if="${option['anatole_style_post_title_lower']}"]*/
+        .post .post-title h3 {
+        text-transform: none;
+        }
+        /*[/]*/
+        /*[# th:if="${option['anatole_style_blog_title_lower']}"]*/
+        .sidebar .logo-title .title h3 {
+        text-transform: none;
+        }
+        /*[/]*/
+        ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+        background-color: #eee;
+        }
+        ::-webkit-scrollbar-thumb {
+        background-color: /*[[${option['anatole_style_scrollbar']}]]*/ #3798e8;
+        }
+        ::-webkit-scrollbar-track {
+        background-color: #eee;
+        }
+        /*[[${option['anatole_style_self']}]]*/
+    </style>
+</head>
+<body>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<th:block th:fragment="header">
+    <div class="page-top animated fadeInDown">
+        <div class="nav">
+            <!--<@commonTag method="menus">-->
+            <!--<#list menus?sort_by('menuSort') as menu>-->
+            <!-- todo: menu list-->
+            <li>
+                <a href="${menu.menuUrl}" target="${menu.menuTarget!}">${menu.menuName} </a>
+            </li>
+        <!--</#list>-->
+    <!--</@commonTag>-->
+    </div>
+    <div class="information">
+        <div class="back_btn">
+            <li>
+                <a onclick="window.history.go(-1)" style="display: none" class="fa fa-chevron-left"></a>
+            </li>
+        </div>
+        <div class="avatar">
+            <img th:src="${option['anatole_style_right_icon']}?: '/anatole/source/images/logo.png'" />
+        </div>
+    </div>
+    </div>
+</th:block>
+</body>
+</html>

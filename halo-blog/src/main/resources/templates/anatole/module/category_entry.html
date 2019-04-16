@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <div th:fragment="categoryEntry(categories)">
+        <div th:each="category : ${categories}">
+            <h4 th:text="${category.cateName}"></h4>
+            <ul>
+                <li th:each="post : ${category.posts}" th:text="${post.postTitle}"></li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

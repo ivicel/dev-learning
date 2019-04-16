@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/module/head :: head(~{::title}, _, ~{::style})}">
+    <title th:text="${option['blog_title']}?:'' + ' | ' + #{admin.comments.title}"></title>
+    <link rel="stylesheet" th:href="@{/static/halo-common/OwO/OwO.min.css}">
+    <style type="text/css" rel="stylesheet">
+        .draft, .publish, .trash {
+            list-style: none;
+            float: left;
+            margin: 0;
+            padding-bottom: 10px
+        }
+
+        s
+    </style>
+</head>
+<body class="hold-transition sidebar-mini"
+      th:classappend="${option['admin_theme']?:'skin-blue'} + ' ' + ${option['admin_layout']?:''} + ' ' +
+    ${option['sidebar_style']?:''}">
+    <div th:replace="~{admin/module/header :: header}"></div>
+    <div th:replace="~{admin/module/sidebar :: sidebar}"></div>
+
+    <div class="content-wrapper">
+        <section class="content-header" id="animated-header">
+            <h1>[[#{admin.comments.title}]]
+                <small></small>
+            </h1>
+            <ol class="breadcrumb">
+                <li>
+                    <a data-pjax="true" th:href="@{/admin}"><i class="fa fa-dashboard"></i>[[#{admin.index.bread.index}]]</a>
+                </li>
+                <li class="active">[[#{admin.comments.title}]]</li>
+            </ol>
+        </section>
+        <section class="content container-fluid" id="animated-content">
+            <ul style="list-style: none;padding-left: 0">
+                <li class="publish">
+                    <a data-pjax="true" th:href="@{/admin/comments}" th:styleappend="${status == 0}? 'color: #000'">
+                        [[#{common.status.published}]]<span class="count">([[${publicCount}]])</span>
+                    </a>&nbsp;|&nbsp;
+                </li>
+                <li class="draft">
+                    <a data-pjax="true" th:href="@{/admin/comments(status=1)}"
+                       th:styleappend="${status == 1}? 'color: #000'">[[#{common.status.checking}]]
+                        <span class="count">([[${checkCount}]])</span></a>&nbsp;|&nbsp;
+                </li>
+                <li class="trash">
+                    <a data-pjax="true" th:href="@{/admin/comments(status=2)}"
+                       th:styleappend="${status == 0}? 'color: #000'">[[#{common.status.recycle-bin}]]
+                        <span class="count">([[${trashCount}]])</span></a>
+                </li>
+            </ul>
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="box box-primary">
+                        <div class="box-body table-responsive no-padding">
+                            <table class="table table-hover">
+                                <tbody>
+                                <tr>
+                                    <th>[[#{common.th.comment-author}]]</th>
+                                    <th width="50%">[[#{common.th.content}]]</th>
+                                    <th>[[#{common.th.comment-page}]]</th>
+                                    <th>[[#{common.th.date}]]</th>
+                                    <th>[[#{common.th.control}]]</th>
+                                </tr>
+                                <th:block th:each="comment : ${comments}">
+                                    <tr>
+                                        <td><a th:href="@{${comment.commentAuthorUrl}?: '#'}" target="_blank">[[${comment.commentAuthor}]]</a>
+                                        </td>
+                                        <td><p>[[${comment.commentContent}]]</p></td>
+                                        <td>
+                                            <a target="_blank" th:if="${comment.post.postType eq 'post'}"
+                                               th:href="@{/archives/{url}(url=${comment.post.postUrl})} + '#comment-id-' + ${comment.commentId}">[[${comment.post.postTitle}]]</a>
+                                            <a target="_blank" th:if="${comment.post.postType ne 'post'}"
+                                               th:href="@{/p/{url}(url=${comment.post.postUrl})} + '#comment-id-' + ${comment.commentId}">
+                                                [[${comment.post.postTitle}]]
+                                            </a>
+                                        </td>
+                                        <td>[[${#dates.format(comment.commentDate, 'yyyy-MM-dd HH:mm')}]]</td>
+                                        <td th:switch="${comment.commentStatus}">
+                                            <th:block th:case="0">
+                                            <button class="btn btn-primary btn-xs " th:id="show"
+                                                th:classappend="${comment.isAdmin eq 1}? disabled"
+                                                th:attr="data-comment-id=${comment.commentId}, data-post-id=${comment.post.postId}">
+                                                [[#{common.btn.reply}]]
+                                            </button>
+                                            <button class="btn btn-danger btn-xs model-show"
+                                                th:attr="data-url=@{/admin/comments/throw(commentId=${comment.commentId},status=0, page=${comments.number})},data-msg=#{common.text.tips.to-recycle-bin}">
+                                                [[#{common.btn.recycling}]]
+                                            </button>
+                                            </th:block>
+                                            <th:block th:case="1">
+                                                <a data-pjax="true" class="btn btn-primary btn-xs model-show"
+                                                   th:attr="data-url=@{/admin/comments/revert(commentId=${comment.commentId},status=1)}, data-msg=#{common.btn.pass}"></a>
+                                                <button class="btn btn-info btn-xs " id="show"
+                                                    th:attr="data-comment-id=${comment.commentId},
+                                                    data-post-id=${comment.post.postId}">
+                                                    [[#{common.btn.pass-reply}]]
+                                                </button>
+                                                <button class="btn btn-danger btn-xs model-show"
+                                                    th:attr="data-url=@{/admin/comments/throw(
+                                                    commentId=${comment.commentId}, status=1,
+                                                    page=${comments.number})},
+                                                    data-msg=#{common.text.tips.to-recycle-bin}">
+                                                    [[#{common.btn.recycling}]]
+                                                </button>
+                                            </th:block>
+                                            <th:block th:case="2">
+                                                <a data-pjax="true" class="btn btn-primary btn-xs "
+                                                   th:href="@{/admin/comments/revert(commentId=${comment.commentId}, status=2)}">[[#{common.btn.reduction}]]</a>
+                                                <button class="btn btn-danger btn-xs model-show"
+                                                    th:attr="data-url=@{/admin/comments/remove(commentId=${comment.commentId}, status=2, page=${comments.number})},
+                                                    data-msg=#{common.text.tips.to-delete}">
+                                                    [[#{common.btn.delete}]]
+                                                </button>
+                                            </th:block>
+                                        </td>
+                                    </tr>
+                                </th:block>
+                                <tr th:if="${#lists.isEmpty(comments)}">
+                                    <td colspan="5" style="text-align: center">[[#{common.text.no-data}]]</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="box-footer clearfix">
+                            <div class="no-margin pull-left">
+                                [[#{admin.pageinfo.text.no}]]&nbsp;[[${comments.number} + 1]]&nbsp;/&nbsp;[[${comments.totalPages}]]&nbsp;[[#{admin.pageinfo.text.page}]]
+                            </div>
+                            <div class="btn-group pull-right btn-group-sm" role="group">
+                                <a data-pjax="true" class="btn btn-default"
+                                   th:classappend="${not comments.hasPrevious()}? disabled"
+                                   th:href="@{/admin/comments(status=${status})}">
+                                    [[#{admin.pageinfo.btn.first}]]
+                                </a>
+                                <a data-pjax="true" class="btn btn-default"
+                                   th:classappend="${not comments.hasPrevious()}? disabled"
+                                   th:href="@{/admin/comments(status=${status},page=${comments.number} - 1)}">
+                                    [[#{admin.pageinfo.btn.pre}]]
+                                </a>
+                                <a data-pjax="true" class="btn btn-default"
+                                   th:classappend="${not comments.hasNext()}? disabled"
+                                   th:href="@{/admin/comments(status=${status}, page=${comments.number}+1)}">
+                                    [[#{admin.pageinfo.btn.next}]]
+                                </a>
+                                <a data-pjax="true" class="btn btn-default"
+                                   th:classappend="${not comments.hasNext()}? disabled"
+                                   th:href="@{/admin/comments(status=${status}, page=${comments.totalPages} - 1)}">
+                                    [[#{admin.pageinfo.btn.last}]]
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- 删除确认弹出层 -->
+        <div class="modal fade" id="removeCommentModal">
+            <div class="modal-dialog">
+                <div class="modal-content message_align">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">×</span></button>
+                        <h4 class="modal-title">[[#{common.text.tips}]]</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p id="message"></p>
+                    </div>
+                    <div class="modal-footer">
+                        <input type="hidden" id="url"/>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">[[#{common.btn.cancel}]]
+                        </button>
+                        <a onclick="removeIt()" class="btn btn-danger" data-dismiss="modal">[[#{common.btn.define}]]</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 回复弹出层 -->
+        <div class="modal fade" id="commentReplyModal">
+            <div class="modal-dialog">
+                <div class="modal-content message_align">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">×</span></button>
+                        <h4 class="modal-title">[[#{common.btn.reply}]]</h4>
+                    </div>
+                    <form>
+                        <input type="hidden" id="commentId" name="commentId" value=""/>
+                        <input type="hidden" id="userAgent" name="userAgent" value=""/>
+                        <input type="hidden" id="postId" name="postId" value=""/>
+                        <div class="modal-body">
+                            <textarea class="form-control comment-input-content" rows="5" id="commentContent"
+                                      name="commentContent" style="resize: none"></textarea>
+                            <div class="OwO"></div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">
+                                [[#{common.btn.cancel}]]
+                            </button>
+                            <button type="button" class="btn btn-primary" onclick="reply()">
+                                [[#{common.btn.define}]]
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <th:block th:replace="~{admin/module/footer :: scriptEntry(~{::script})}">
+        <script type="application/javascript" th:inline="javascript">
+            var s = new OwO({
+                container: document.getElementsByClassName('OwO')[0],
+                target: document.getElementsByClassName('comment-input-content')[0],
+                position: 'down',
+                width: '100%',
+                maxHeight: '210px',
+                api: /*[[@{/static/halo-common/OwO/OwO.min.json}]]*/""
+            });
+
+            $('.model-show').click(function () {
+                $('#url').val($(this).data('url'));
+                $('#message').html($(this).data('msg'));
+                $('#removeCommentModal').modal();
+            });
+
+            function removeIt() {
+                var url = $.trim($("#url").val());
+            }
+
+            /**
+             * 显示回复模态框
+             *
+             * @param commentId commentId
+             * @param postId postId
+             */
+            $('#show').click(function () {
+                let commentId = $(this).data('comment-id');
+                let postId = $(this).data('post-id');
+                $('#userAgent').val(navigator.userAgent);
+                $('#commentId').val(commentId);
+                $('#postId').val(postId);
+                $('#commentReplyModal').modal();
+            });
+
+            function reply() {
+                $.post('/admin/comments/reply', {
+                    'commentId': $("#commentId").val(),
+                    'userAgent': $("#userAgent").val(),
+                    'postId': $("#postId").val(),
+                    'commentContent': halo.formatContent($("#commentContent").val())
+                }, function (data) {
+                    if (data.code === 1) {
+                        window.location.reload();
+                    }
+                }, 'JSON');
+            }
+        </script>
+    </th:block>
+</body>
+</html>

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/module/head :: head(~{::title}, _, _)}">
+    <title th:text="${option['blog_title']}?:'' + ' | ' + #{admin.pages.title}"></title>
+</head>
+<body class="hold-transition sidebar-mini"
+      th:classappend="${option['admin_theme']?:'skin-blue'} + ' ' + ${option['admin_layout']?:''} + ' ' +
+    ${option['sidebar_style']?:''}">
+    <div th:replace="~{admin/module/header :: header}"></div>
+    <div th:replace="~{admin/module/sidebar :: sidebar}"></div>
+
+<div class="content-wrapper">
+    <section class="content-header" id="animated-header">
+        <h1 style="display: inline-block;">[[#{admin.pages.title}]]<small></small></h1>
+        <a class="btn-header" id="btnNewPage" th:href="@{/admin/page/new}">
+            [[#{admin.pages.btn.new-page}]]
+        </a>
+        <ol class="breadcrumb">
+            <li>
+                <a data-pjax="true" th:href="@{/admin}"><i class="fa fa-dashboard"></i> [[#{admin.index.bread.index}]]</a>
+            </li>
+            <li><a data-pjax="true" href="javascript:void(0)">[[#{admin.pages.title}]]</a></li>
+            <li class="active">[[#{admin.pages.bread.all-pages}]]</li>
+        </ol>
+    </section>
+    <section class="content container-fluid" id="animated-content">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="nav-tabs-custom">
+                    <ul class="nav nav-tabs">
+                        <li class="active">
+                            <a href="#internal" data-toggle="tab">[[#{admin.pages.tab.internal-page}]]</a>
+                        </li>
+                        <li>
+                            <a href="#pages" data-toggle="tab">[[#{admin.pages.tab.custom-page}]]</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content" style="padding: 0;">
+                        <div class="tab-pane active" id="internal">
+                            <div class="box-body table-responsive no-padding">
+                                <table class="table table-hover">
+                                    <tbody>
+                                    <tr>
+                                        <th>[[#{common.th.title}]]</th>
+                                        <th>[[#{common.th.url}]]</th>
+                                        <th>[[#{common.th.control}]]</th>
+                                    </tr>
+                                    <tr>
+                                        <td>[[#{admin.pages.links}]]</td>
+                                        <td th:text="@{/links}">/links</td>
+                                        <td>
+                                            <a th:href="@{/links}" class="btn btn-info btn-xs " target="_blank">[[#{common.btn.view}]]</a>
+                                            <a data-pjax="true" th:href="@{/admin/page/links}" class="btn btn-primary btn-xs ">[[#{common.btn.edit}]]</a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>[[#{admin.pages.gallery}]]</td>
+                                        <td th:text="@{/gallery}">/gallery</td>
+                                        <td>
+                                            <a th:href="@{/gallery}" class="btn btn-info btn-xs " target="_blank">[[#{common.btn.view}]]</a>
+                                            <a data-pjax="true" th:href="@{/admin/page/galleries}" class="btn btn-primary btn-xs ">[[#{common.btn.edit}]]</a>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="pages">
+                            <div class="box-body table-responsive no-padding">
+                                <table class="table table-hover">
+                                    <tbody>
+                                    <tr>
+                                        <th>[[#{common.th.title}]]</th>
+                                        <th>[[#{common.th.url}]]</th>
+                                        <th>[[#{common.th.comments}]]</th>
+                                        <td>[[#{common.th.views}]]</td>
+                                        <th>[[#{common.th.status}]]</th>
+                                        <th>[[#{common.th.date}]]</th>
+                                        <th>[[#{common.th.control}]]</th>
+                                    </tr>
+                                    <!--<#if pages?size gt 0>-->
+                                    <!--<#list pages as page>-->
+                                    <tr th:each="page : ${pages}">
+                                        <td>${page.postTitle}</td>
+                                        <td th:text="@{/p/{url}(url=${page.postUrl})}"></td>
+                                        <td>
+                                            <span class="label" style="background-color: #d6cdcd;">[[${#lists.size(page.comments)}]]</span>
+                                        </td>
+                                        <td>
+                                            <span class="label" style="background-color: #d6cdcd;">[[${page.postViews}]]</span>
+                                        </td>
+                                        <td>
+                                            <span th:if="${page.postStatus eq 0}" class="label bg-green">[[#{common.status.published}]]</span>
+                                            <span th:if="${page.postStatus eq 1}" class="label bg-yellow">[[#{common.status.draft}]]</span>
+                                            <span th:if="${page.postStatus ne 0 and page.postStatus ne 1}" class="label bg-red">[[#{common.status.recycle-bin}]]</span>
+                                        </td>
+                                        <td>[[${#dates.format(page.postDate, 'yyyy-MM-dd HH:mm')}]]</td>
+                                        <td>
+                                            <a th:href="@{/p/{url}(url=${page.postUrl})}" class="btn btn-info btn-xs " target="_blank">[[#{common.btn.view}]]</a>
+                                            <a data-pjax="true" th:href="@{/admin/page/edit(pageId=${page.postId})}" class="btn btn-primary btn-xs ">[[#{common.btn.edit}]]</a>
+                                            <button class="btn btn-danger btn-xs " onclick="modelShow('/admin/posts/remove?postId=${page.postId?c}&postType=${page.postType}','<@spring.message code="common.text.tips.to-delete" />')">[[#{common.btn.delete}]]</button>
+                                        </td>
+                                    </tr>
+                                    <!--</#list>-->
+                                    <!--<#else>-->
+                                    <tr th:if="${pages}">
+                                        <td colspan="7" style="text-align: center;">[[#{common.text.no-data}]]</td>
+                                    </tr>
+                                <!--</#if>-->
+                                </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- 删除确认弹出层 -->
+    <div class="modal fade" id="removePostModal">
+        <div class="modal-dialog">
+            <div class="modal-content message_align">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                    <h4 class="modal-title">[[#{common.text.tips}]]</h4>
+                </div>
+                <div class="modal-body">
+                    <p id="message"></p>
+                </div>
+                <div class="modal-footer">
+                    <input type="hidden" id="url"/>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">[[#{common.btn.cancel}]]</button>
+                    <a onclick="removeIt()" class="btn btn-danger" data-dismiss="modal">[[#{common.btn.define}]]</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block th:replace="~{admin/module/footer :: scriptEntry(~{::script})}">
+    <script type="application/javascript" th:inline="javascript">
+        function modelShow(url,message) {
+            $('#url').val(url);
+            $('#message').html(message);
+            $('#removePostModal').modal();
+        }
+        function removeIt(){
+            var url=$.trim($("#url").val());
+        }
+    </script>
+</th:block>
+
+</body>
+</html>

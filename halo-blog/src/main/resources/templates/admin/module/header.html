@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <header class="main-header" th:fragment="header">
+        <a th:href="@{/admin}" class="logo">
+            <span class="logo-mini"><b>H</b>a</span>
+            <span class="logo-lg"><b>Ha</b>lo</span>
+        </a>
+        <nav class="navbar navbar-static-top" role="navigation">
+            <a href="javascript:void(0)" class="sidebar-toggle" data-toggle="push-menu" role="button">
+                <span class="sr-only">Toggle navigation</span>
+            </a>
+            <div class="navbar-custom-menu">
+                <ul class="nav navbar-nav">
+                    <li><a th:href="@{/}" th:title="#{admin.module.header.a.title.turn-to-front}"
+                           target="_blank"><i class="fa fa-location-arrow"></i></a></li>
+                    <li class="dropdown messages-menu">
+                        <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">
+                            <i class="fa fa-envelope-o"></i>
+                            <span class="label label-success" th:if="${not #lists.isEmpty(newComments)}"
+                                  th:text="${#lists.size(newComments)}"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li class="header" th:if="${not #lists.isEmpty(newComments)}">
+                                [[#{admin.module.header.new-comments-before} + ${#lists.size(newComments)} +
+                                #{admin.module.header.new-comments-after}]]
+                            </li>
+                            <li>
+                                <ul class="menu">
+                                    <li th:if="${not #lists.isEmpty(newComments)}"
+                                        th:each="newComment : ${newComments}">
+                                        <a data-pjax="true" th:href="@{/admin/comments(status=1)}">
+                                            <div class="pull-left">
+                                                <img
+                                                    th:src="@{//gravatar.loli.net/avatar/{md5}(md5=(comment.commentAuthorAvatarMd5?: 'hash'), s=256, d=(option['native_comment_avatar']?: 'mm'))}"
+                                                    class="img-circle" alt="User Image">
+                                            </div>
+                                            <h4 th:text="${comment.commentAuthor}">
+                                                <small th:text="${comment.commentDate}"></small>
+                                            </h4>
+                                            <object th:text="${comment.commentContent}"></object>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="footer">
+                                <a data-pjax="true" th:href="@{/admin/comments(status=1)}"
+                                   th:text="#{admin.module.header.btn.view-all-comments}"></a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="dropdown user user-menu">
+                        <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">
+                            <img th:src="${#servletContext.contextPath} + (${user.userAvatar ne null} ?
+                            ${user.userAvatar} : '/static/halo-backend/images/default.png')"
+                            class="user-image" alt="User Image">
+                            <span class="hidden-xs" th:text="${user.userDisplayName}"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li class="user-header">
+                                <img th:src="${#servletContext.contextPath} + (${user.userAvatar} ?
+                                ${user.userAvatar} : '/static/halo-backend/images/default.png')"
+                                     class="img-circle" alt="User Image">
+                                <p th:text="${user.userDisplayName}"></p>
+                            </li>
+                            <li class="user-footer">
+                                <div class="pull-left">
+                                    <a data-pjax="true" th:href="@{/admin/profile}" class="btn btn-default ">
+                                        <i class="fa fa-user"></i>[[#{admin.module.header.btn.profile}]]</a>
+                                </div>
+                                <div class="pull-right">
+                                    <a th:href="@{/admin/logOut}" class="btn btn-default ">
+                                        <i class="fa fa-sign-out"></i>[[#{admin.module.header.btn.loginout}]]</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+</body>
+</html>

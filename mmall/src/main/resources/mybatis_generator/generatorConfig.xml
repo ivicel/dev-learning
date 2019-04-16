@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+    PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+    "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<generatorConfiguration>
+    <properties resource="db.properties" />
+
+    <context id="mmall" defaultModelType="flat" targetRuntime="MyBatis3Simple">
+        <!-- 为关键字添加分隔符 -->
+        <property name="autoDelimitKeywords" value="true" />
+        <property name="beginningDelimiter" value="`" />
+        <property name="endingDelimiter" value="`" />
+        
+        <commentGenerator>
+            <property name="suppressAllComments" value="true" />
+            <property name="suppressDate" value="true" />
+        </commentGenerator>
+
+        <!-- 数据库连接设置 -->
+        <jdbcConnection
+            driverClass="${db.driverClassName}"
+            connectionURL="${db.url}"
+            userId="${db.username}"
+            password="${db.password}">
+            <property name="nullCatalogMeansCurrent" value="true" />
+        </jdbcConnection>
+
+        <!-- 数据库类型和 java 类型的映射 -->
+        <javaTypeResolver>
+            <property name="forceBigDecimals" value="false" />
+        </javaTypeResolver>
+
+        <!-- POJO 生成设置 -->
+        <javaModelGenerator targetPackage="com.mmall.pojo" targetProject="src/main/java">
+            <property name="trimStrings" value="true" />
+        </javaModelGenerator>
+        
+        <!-- 生成的 XML mapper 设置 -->
+        <sqlMapGenerator targetPackage="com.mmall.mapper" targetProject="src/main/resources">
+            <property name="enableSubPackages" value="true" />
+        </sqlMapGenerator>
+
+        <javaClientGenerator type="XMLMAPPER" targetPackage="com.mmall.dao" targetProject="src/main/java" />
+
+
+
+        <table tableName="mmall_cart" domainObjectName="Cart" />
+
+        <table tableName="mmall_category" domainObjectName="Category" />
+
+        <table tableName="mmall_order" domainObjectName="Order" />
+
+        <table tableName="mmall_order_item" domainObjectName="OrderItem" />
+
+        <table tableName="mmall_pay_info" domainObjectName="PayInfo" />
+
+        <table tableName="mmall_product" domainObjectName="Product" />
+
+        <table tableName="mmall_shipping" domainObjectName="Shipping" />
+
+        <table tableName="mmall_user" domainObjectName="User" />
+
+    </context>
+
+</generatorConfiguration>

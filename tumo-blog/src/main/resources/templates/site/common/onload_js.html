@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<th:block th:fragment="onloadJS(scripts)">
+    <script type="text/javascript" th:src="@{/static/lib/js/jquery.min.js}"></script>
+    <script type="text/javascript" src="//unpkg.com/vue@2.6.10/dist/vue.js"></script>
+    <script type="text/javascript" src="//unpkg.com/element-ui@2.6.3/lib/index.js"></script>
+    <script type="text/javascript" src="//unpkg.com/axios@0.18.0/dist/axios.min.js"></script>
+    <script type="text/javascript" th:src="@{/static/js/base.js}"></script>
+    <th:block th:replace="${scripts}"/>
+</th:block>
+</body>
+</html>

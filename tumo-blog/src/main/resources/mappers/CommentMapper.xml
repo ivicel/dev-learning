@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="info.ivicel.tumoblog.admin.mapper.CommentMapper">
+    <resultMap id="BaseResultMap" type="info.ivicel.tumoblog.admin.entity.Comment">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="parent_id" jdbcType="BIGINT" property="parentId"/>
+        <result column="child_id" jdbcType="BIGINT" property="childId"/>
+        <result column="article_title" jdbcType="VARCHAR" property="articleTitle"/>
+        <result column="article_id" jdbcType="BIGINT" property="articleId"/>
+        <result column="author" jdbcType="VARCHAR" property="author"/>
+        <result column="author_id" jdbcType="VARCHAR" property="authorId"/>
+        <result column="email" jdbcType="VARCHAR" property="email"/>
+        <result column="time" jdbcType="TIMESTAMP" property="time"/>
+        <result column="url" jdbcType="VARCHAR" property="url"/>
+        <result column="state" jdbcType="VARCHAR" property="state"/>
+        <result column="sort" jdbcType="BIGINT" property="sort"/>
+    </resultMap>
+    <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="info.ivicel.tumoblog.admin.entity.Comment">
+        <result column="content" jdbcType="LONGVARCHAR" property="content"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, parent_id, child_id, article_title, article_id, author, author_id, email, `time`,
+    url, `state`, sort
+    </sql>
+    <sql id="Blob_Column_List">
+        `content`
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
+        select
+        <include refid="Base_Column_List"/>
+        ,
+        <include refid="Blob_Column_List"/>
+        from comments
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete
+        from comments
+        where id = #{id,jdbcType=BIGINT}
+    </delete>
+    <insert id="insert" parameterType="info.ivicel.tumoblog.admin.entity.Comment">
+        insert into comments (id, parent_id, child_id,
+                              article_title, article_id, author,
+                              author_id, email, `time`,
+                              url, `state`, sort, content)
+        values (#{id,jdbcType=BIGINT}, #{parentId,jdbcType=BIGINT}, #{childId,jdbcType=BIGINT},
+                #{articleTitle,jdbcType=VARCHAR}, #{articleId,jdbcType=BIGINT}, #{author,jdbcType=VARCHAR},
+                #{authorId,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, #{time,jdbcType=TIMESTAMP},
+                #{url,jdbcType=VARCHAR}, #{state,jdbcType=VARCHAR}, #{sort,jdbcType=BIGINT},
+                #{content,jdbcType=LONGVARCHAR})
+    </insert>
+    <insert id="insertSelective" parameterType="info.ivicel.tumoblog.admin.entity.Comment">
+        insert into comments
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="parentId != null">
+                parent_id,
+            </if>
+            <if test="childId != null">
+                child_id,
+            </if>
+            <if test="articleTitle != null">
+                article_title,
+            </if>
+            <if test="articleId != null">
+                article_id,
+            </if>
+            <if test="author != null">
+                author,
+            </if>
+            <if test="authorId != null">
+                author_id,
+            </if>
+            <if test="email != null">
+                email,
+            </if>
+            <if test="time != null">
+                `time`,
+            </if>
+            <if test="url != null">
+                url,
+            </if>
+            <if test="state != null">
+                `state`,
+            </if>
+            <if test="sort != null">
+                sort,
+            </if>
+            <if test="content != null">
+                content,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="parentId != null">
+                #{parentId,jdbcType=BIGINT},
+            </if>
+            <if test="childId != null">
+                #{childId,jdbcType=BIGINT},
+            </if>
+            <if test="articleTitle != null">
+                #{articleTitle,jdbcType=VARCHAR},
+            </if>
+            <if test="articleId != null">
+                #{articleId,jdbcType=BIGINT},
+            </if>
+            <if test="author != null">
+                #{author,jdbcType=VARCHAR},
+            </if>
+            <if test="authorId != null">
+                #{authorId,jdbcType=VARCHAR},
+            </if>
+            <if test="email != null">
+                #{email,jdbcType=VARCHAR},
+            </if>
+            <if test="time != null">
+                #{time,jdbcType=TIMESTAMP},
+            </if>
+            <if test="url != null">
+                #{url,jdbcType=VARCHAR},
+            </if>
+            <if test="state != null">
+                #{state,jdbcType=VARCHAR},
+            </if>
+            <if test="sort != null">
+                #{sort,jdbcType=BIGINT},
+            </if>
+            <if test="content != null">
+                #{content,jdbcType=LONGVARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="info.ivicel.tumoblog.admin.entity.Comment">
+        update comments
+        <set>
+            <if test="parentId != null">
+                parent_id = #{parentId,jdbcType=BIGINT},
+            </if>
+            <if test="childId != null">
+                child_id = #{childId,jdbcType=BIGINT},
+            </if>
+            <if test="articleTitle != null">
+                article_title = #{articleTitle,jdbcType=VARCHAR},
+            </if>
+            <if test="articleId != null">
+                article_id = #{articleId,jdbcType=BIGINT},
+            </if>
+            <if test="author != null">
+                author = #{author,jdbcType=VARCHAR},
+            </if>
+            <if test="authorId != null">
+                author_id = #{authorId,jdbcType=VARCHAR},
+            </if>
+            <if test="email != null">
+                email = #{email,jdbcType=VARCHAR},
+            </if>
+            <if test="time != null">
+                `time` = #{time,jdbcType=TIMESTAMP},
+            </if>
+            <if test="url != null">
+                url = #{url,jdbcType=VARCHAR},
+            </if>
+            <if test="state != null">
+                `state` = #{state,jdbcType=VARCHAR},
+            </if>
+            <if test="sort != null">
+                sort = #{sort,jdbcType=BIGINT},
+            </if>
+            <if test="content != null">
+                content = #{content,jdbcType=LONGVARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKeyWithBLOBs" parameterType="info.ivicel.tumoblog.admin.entity.Comment">
+        update comments
+        set parent_id     = #{parentId,jdbcType=BIGINT},
+            child_id      = #{childId,jdbcType=BIGINT},
+            article_title = #{articleTitle,jdbcType=VARCHAR},
+            article_id    = #{articleId,jdbcType=BIGINT},
+            author        = #{author,jdbcType=VARCHAR},
+            author_id     = #{authorId,jdbcType=VARCHAR},
+            email         = #{email,jdbcType=VARCHAR},
+            `time`        = #{time,jdbcType=TIMESTAMP},
+            url           = #{url,jdbcType=VARCHAR},
+            `state`       = #{state,jdbcType=VARCHAR},
+            sort          = #{sort,jdbcType=BIGINT},
+            content       = #{content,jdbcType=LONGVARCHAR}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="info.ivicel.tumoblog.admin.entity.Comment">
+        update comments
+        set parent_id     = #{parentId,jdbcType=BIGINT},
+            child_id      = #{childId,jdbcType=BIGINT},
+            article_title = #{articleTitle,jdbcType=VARCHAR},
+            article_id    = #{articleId,jdbcType=BIGINT},
+            author        = #{author,jdbcType=VARCHAR},
+            author_id     = #{authorId,jdbcType=VARCHAR},
+            email         = #{email,jdbcType=VARCHAR},
+            `time`        = #{time,jdbcType=TIMESTAMP},
+            url           = #{url,jdbcType=VARCHAR},
+            `state`       = #{state,jdbcType=VARCHAR},
+            sort          = #{sort,jdbcType=BIGINT}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <select id="count" resultType="java.lang.Long">
+        select count(0) from comments;
+    </select>
+
+    <select id="findAllDesc" resultType="info.ivicel.tumoblog.admin.entity.Comment">
+        select <include refid="Base_Column_List"/>, content from comments
+        order by `time` desc limit #{offset}, #{num}
+    </select>
+
+</mapper>

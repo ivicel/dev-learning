@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{anatole/module/head :: head(~{::meta}, ~{::title}, _, _)}">
+    <meta name="keywords" th:content="${keywords}"/>
+    <meta name="description" th:content="${description}" />
+    <title>首页</title>
+</head>
+<body>
+    <div th:replace="anatole/module/sidebar :: sidebar"></div>
+    <div class="main">
+        <div th:include="~{anatole/module/header :: header}"></div>
+        <div class="autopagerize_page_element">
+            <div class="content">
+                <th:block th:replace="~{anatole/module/post_entry :: postEntry(${posts})}"/>
+
+                <th:block th:replace="~{anatole/module/pagination :: pagination('', ${posts})}"/>
+            </div>
+        </div>
+    </div>
+    <th:block th:replace="~{anatole/module/footer :: footer(_)}"/>
+</body>
+</html>

@@ -1,0 +1,23 @@
+.category {
+    padding-right: 0 !important;
+}
+
+.tags {
+    padding-left: 0 !important;
+    margin-top: 10px;
+    margin-left: 40px;
+}
+
+.el-tag {
+    margin-left: 10px
+}
+
+.button-new-tag {
+    margin-left: 10px;
+}
+
+.input-new-tag {
+    width: 100px;
+    margin-left: 10px;
+    vertical-align: bottom;
+}

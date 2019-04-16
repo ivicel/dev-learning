@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <ul th:fragment="childCommentEntry(comments)" class="comment-list"
+        style="margin-left: 30px; border-left: 1px solid #f1f1f1"
+        th:unless="${comments eq null or comments.isEmpty()}">
+        <li th:each="comment : ${comments}" class="comment-list-one"
+            th:id="'comment-id-'+${comment.commentId}" style="margin-left: 5px;">
+            <img class="comment-list-one-img" th:src="'//gravatar.loli.net/avatar/' +
+                        ${comment.commentAuthorAvatarMd5} + '?s=256&d=' +
+                        (${option['native_comment_avatar']}?: 'mm')">
+            <section>
+                <div class="comment-list-one-head">
+                    <a class="comment-list-one-head-name" rel="nofollow" href="${comment.commentAuthorUrl!}" th:text="${comment.commentAuthor}"></a>
+                    <span class="comment-ua-info" style="display: none"
+                          th:text="${comment.commentAgent}"></span>
+                    <span th:if="${comment.isAdmin eq 1}" class="comment-list-one-head-admin">博主</span>
+                </div>
+                <div class="comment-list-one-content">
+                    <p th:text="${comment.commentContent}"></p>
+                </div>
+                <div class="comment-list-one-footer">
+                        <span class="comment-list-one-footer-time"
+                              th:text="${#dates.format(comment.commentDate, 'yyyy-MM-dd HH:mm')}"></span>
+                    <span th:at="${comment.commentId}?: 'c'" class="comment-list-one-footer-reback">回复</span>
+                </div>
+            </section>
+            <div th:if="${#lists.isEmpty(comment.childComments)}"
+                 th:replace="~{::childCommentEntry(${comment.childComments})}"></div>
+        </li>
+    </ul>
+</body>
+</html>

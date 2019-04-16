@@ -1,0 +1,70 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:mvc="http://www.springframework.org/schema/mvc"
+    xsi:schemaLocation="
+        http://www.springframework.org/schema/beans 
+        http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+        http://www.springframework.org/schema/mvc   
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/context 
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/tx 
+        http://www.springframework.org/schema/tx/spring-tx.xsd
+http://www.springframework.org/schema/mvc
+http://www.springframework.org/schema/mvc ">
+    <context:component-scan base-package="info.ivicel.web.controller
+                                          info.ivicel.web.service.impl"/>
+    <mvc:annotation-driven/>
+    <mvc:resources location="/static/" mapping="/static/**"/>
+    <import resource="classpath:mybatis-config.xml"/>
+
+    <bean class="org.thymeleaf.spring5.view.ThymeleafViewResolver">
+        <property name="characterEncoding" value="UTF-8"/>
+        <property name="templateEngine">
+            <bean class="org.thymeleaf.spring5.SpringTemplateEngine">
+                <property name="templateResolver">
+                    <bean class="org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver">
+                        <property name="characterEncoding" value="UTF-8"/>
+                        <property name="prefix" value="/WEB-INF/templates/"/>
+                        <property name="suffix" value=".html"/>
+                    </bean>
+                </property>
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+        <property name="securityManager">
+            <bean class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+                <property name="realm">
+                    <bean class="info.ivicel.web.MyRealm"/>
+                </property>
+                <property name="sessionManager">
+                    <bean class="org.apache.shiro.web.session.mgt.DefaultWebSessionManager">
+                        <property name="globalSessionTimeout" value="60000"/>
+                        <property name="deleteInvalidSessions" value="true"/>
+                    </bean>
+                </property>
+                <property name="rememberMeManager">
+                    <bean class="org.apache.shiro.web.mgt.CookieRememberMeManager">
+
+                    </bean>
+                </property>
+            </bean>
+        </property>
+        <property name="loginUrl" value="/auth/login"/>
+        <property name="unauthorizedUrl" value="/auth/login"/>
+        <property name="filterChainDefinitions">
+            <value>
+                /auth/login=anon
+                /auth/register=anon
+                /auth/** = authc
+                /auth/logout = logout
+                /** = anon
+            </value>
+        </property>
+    </bean>
+
+</beans>

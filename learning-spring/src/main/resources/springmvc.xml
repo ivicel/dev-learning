@@ -1,0 +1,93 @@
+<?xml version="1.1" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:mvc="http://www.springframework.org/schema/mvc"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd">
+
+
+    <context:component-scan base-package="info.ivicel.springmvc.controller" />
+    <mvc:annotation-driven conversion-service="conversionService" />
+    <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+        <property name="messageConverters">
+            <set>
+                <bean class="org.springframework.http.converter.StringHttpMessageConverter" />
+                <bean class="org.springframework.http.converter.ByteArrayHttpMessageConverter" />
+                <bean
+                    class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter" />
+                <bean
+                    class="org.springframework.http.converter.support.AllEncompassingFormHttpMessageConverter" />
+            </set>
+        </property>
+    </bean>
+
+    <bean class="org.thymeleaf.spring4.view.ThymeleafViewResolver">
+        <property name="templateEngine">
+            <bean class="org.thymeleaf.spring4.SpringTemplateEngine">
+                <property name="templateResolver">
+                    <bean class="org.thymeleaf.spring4.templateresolver.SpringResourceTemplateResolver">
+                        <property name="prefix" value="/WEB-INF/templates/" />
+                        <property name="suffix" value=".html" />
+                    </bean>
+                </property>
+            </bean>
+        </property>
+    </bean>
+
+    <context:property-placeholder location="classpath:db.properties" />
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource">
+            <bean class="com.alibaba.druid.pool.DruidDataSource">
+                <property name="driverClassName" value="${db.driverClassName}" />
+                <property name="url" value="${db.url}" />
+                <property name="username" value="${db.username}" />
+                <property name="password" value="${db.password}" />
+            </bean>
+        </property>
+        <property name="configLocation" value="classpath:mybatis-config.xml" />
+        <property name="mapperLocations" value="classpath:info/ivicel/springmvc/controller/*.xml" />
+    </bean>
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
+        <property name="basePackage" value="info.ivicel.springmvc.controller" />
+    </bean>
+
+    <bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+        <property name="authenticator">
+            <bean class="org.apache.shiro.authc.pam.ModularRealmAuthenticator">
+                <property name="authenticationStrategy">
+                    <bean class="org.apache.shiro.authc.pam.AllSuccessfulStrategy" />
+                </property>
+            </bean>
+        </property>
+        <property name="realm">
+            <bean class="info.ivicel.springmvc.controller.MyRealm">
+                <property name="credentialsMatcher">
+                    <bean class="org.apache.shiro.authc.credential.HashedCredentialsMatcher">
+                        <property name="hashAlgorithmName" value="MD5" />
+                        <property name="hashIterations" value="5" />
+                    </bean>
+                </property>
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+        <property name="securityManager" ref="securityManager"/>
+        <property name="loginUrl" value="/login"/>
+        <property name="unauthorizedUrl" value="/login"/>
+    </bean>
+
+    <bean id="conversionService" class="org.springframework.context.support.ConversionServiceFactoryBean">
+        <property name="converters">
+            <set>
+                <bean class="info.ivicel.springmvc.model.StringToUserConverter" />
+            </set>
+        </property>
+    </bean>
+</beans>

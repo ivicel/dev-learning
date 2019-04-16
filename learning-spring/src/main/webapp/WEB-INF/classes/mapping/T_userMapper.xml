@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.crossoverJie.dao.T_userDao">
+    <resultMap id="BaseResultMap" type="com.crossoverJie.pojo.T_user">
+        <id property="id" column="id" />
+        <result property="username" column="username" />
+        <result property="password" column="password" />
+        <result property="roleId" column="role_id" />
+    </resultMap>
+
+    <select id="findUserByUsername" resultMap="BaseResultMap">
+        SELECT id, username, `password`, role_id FROM t_user WHERE
+        username = #{username}
+    </select>
+    
+    <select id="findRoles" resultType="String">
+        SELECT r.role_name FROM t_user u, t_role r WHERE u.role_id = r.id AND
+        u.username = #{username}
+    </select>
+
+    <select id="findPermissions" resultType="String">
+        SELECT p.permission_name FROM t_user u, t_role r, t_permission p WHERE
+        u.role_id = r.id AND p.role_id = r.id AND u.username = #{username}
+    </select>
+</mapper>

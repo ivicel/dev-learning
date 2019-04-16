@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.blog.dao.BloggerDao">
+    <resultMap id="BloggerResult" type="Blogger">
+        <id property="id" column="id" />
+        <result property="username" column="username" />
+        <result property="password" column="password" />
+        <result property="nickname" column="nickname" />
+        <result property="sign" column="sign" />
+        <result property="proFile" column="proFile" />
+        <result property="imageName" column="imageName" />
+    </resultMap>
+
+    <select id="getByUserName" resultMap="BloggerResult">
+        SELECT * FROM t_blogger WHERE username = #{username}
+    </select>
+
+    <select id="find" resultMap="BloggerResult">
+        SELECT * FROM t_blogger WHERE id = #{id}
+    </select>
+
+    <select id="update" parameterType="Blogger" resultType="Blogger">
+        UPDATE t_blogger
+        <set>
+            <if test="password != null and password != ''">
+                password = #{password}
+            </if>
+            <if test="nickname != null and nickname != ''">
+                nickname = #{nickname}
+            </if>
+            <if test="sign != null and sign != ''">
+                sign = #{sign}
+            </if>
+            <if test="proFile != null and proFile != ''">
+                proFile = #{proFile}
+            </if>
+            <if test="imageName != null and imageName != ''">
+                imageName = #{imageName}
+            </if>
+        </set>
+        WHERE id = #{id}
+    </select>
+</mapper>

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="../../css/gtvg.css" media="all" th:href="@{/css/gtvg.css}">
+    <title>Good Thymes Vitual Grocery</title>
+</head>
+<body>
+    <!--<p th:utext="#{home.welcome}">Welcome to our grocery stroe.</p>-->
+    <p>Welcome to our grocery stroe, [[${#session}]]</p>
+    <p>Today is: <span th:text="${today}">13 February 2011</span></p>
+    <ol>
+        <li><a href="product/list.html" th:href="@{/product/list}">Product List</a></li>
+        <li><a href="order/list.html" th:href="@{/order/list}">Order List</a></li>
+        <li><a href="subscribe.html" th:href="@{/subscribe}">Subscribe to our Newsletter</a></li>
+        <li><a href="userprofile.html" th:href="@{/userprofile}">See User profile</a></li>
+    </ol>
+    <p>Now you are looking at a <span th:text="'working web application'">template file</span></p>
+    <div th:insert="~{footer::copy}" class="hello">&copy; 2011 The Static Templates</div>
+    <form th:action="@{/subscribe}"></form>
+
+</body>
+</html>

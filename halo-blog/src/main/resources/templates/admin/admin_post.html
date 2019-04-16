@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/module/head :: head(~{::title}, _, ~{::style})}">
+    <title th:text="${option['blog_title']}?:'' + ' | ' + #{admin.posts.title}"></title>
+    <style type="text/css" rel="stylesheet">
+        .draft, .publish, .trash {
+            list-style: none;
+            float: left;
+            margin: 0;
+            padding-bottom: 10px
+        }
+
+        .pretty {
+            margin: 0;
+        }
+    </style>
+</head>
+<body class="hold-transition sidebar-mini"
+      th:classappend="${option['admin_theme']?:'skin-blue'} + ' ' + ${option['admin_layout']?:''} + ' ' +
+    ${option['sidebar_style']?:''}">
+    <div th:replace="~{admin/module/header :: header}"></div>
+    <div th:replace="~{admin/module/sidebar :: sidebar}"></div>
+    <div class="content-wrapper">
+        <section class="content-header" id="animated-header">
+            <h1 style="display: inline-block;" th:text="#{admin.posts.title}"></h1>
+            <a data-pjax="true" class="btn-header" id="btnNewPost" th:text="#{admin.posts.btn.new-post}"
+               th:href="@{/admin/posts/write}">
+            </a>
+            <ol class="breadcrumb">
+                <li>
+                    <a data-pjax="true" th:href="@{/admin}">
+                        <i class="fa fa-dashboard"></i>[[#{admin.index.bread.index}]]
+                    </a>
+                </li>
+                <li>
+                    <a data-pjax="true" href="javascript:void(0)" th:text="#{admin.posts.title}"></a>
+                </li>
+                <li class="active" th:text="#{admin.posts.bread.all-posts}"></li>
+            </ol>
+        </section>
+        <section class="content container-fluid" id="animated-content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <ul style="list-style: none;padding-left: 0">
+                        <li class="publish">
+                            <a data-pjax="true" th:href="@{/admin/posts}"
+                               th:style="${status eq 0}? 'color:#000;'">
+                                [[#{common.status.published}]]
+                                <span class="count">([[${publishCount}]])</span>
+                            </a>&nbsp;|&nbsp;
+                        </li>
+                        <li class="draft">
+                            <a data-pjax="true" th:href="@{/admin/posts(status=1)}"
+                               th:style="${status eq 1}? 'color:#000;'">
+                                [[#{common.status.draft}]]
+                                <span class="count">([[${draftCount}]])</span>
+                            </a>&nbsp;|&nbsp;
+                        </li>
+                        <li class="trash">
+                            <a data-pjax="true" th:href="@{/admin/posts(status=2)}"
+                               th:style="${status eq 2}? 'color:#000;'">
+                                [[#{common.status.recycle-bin}]]
+                                <span class="count">([[${trashCount}]])</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="box box-primary">
+                        <div class="box-body table-responsive no-padding">
+                            <table class="table table-hover">
+                                <tbody>
+                                <tr>
+                                    <th th:text="#{common.th.title}"></th>
+                                    <th th:text="#{common.th.categories}"></th>
+                                    <th th:text="#{common.th.tags}"></th>
+                                    <th th:text="#{common.th.comments}"></th>
+                                    <th th:text="#{common.th.views}"></th>
+                                    <th th:text="#{common.th.date}"></th>
+                                    <th th:text="#{common.th.control}"></th>
+                                </tr>
+                                <tr th:if="${not #lists.isEmpty(posts.content)}" th:each="post : ${posts}">
+                                    <td>
+                                        <a th:if="${post.postStatus eq 0}" target="_blank"
+                                           th:href="@{/archives/{url}(url=${post.postUrl})}"
+                                           th:text="${post.postTitle}"></a>
+                                    </td>
+                                    <td>
+                                        <label th:unless="${#lists.isEmpty(post.categories)}"
+                                               th:each="cate : ${post.categories}">
+                                            [[${cate.cateName}]]&nbsp;&nbsp;</label>
+                                        <label th:if="${#lists.isEmpty(post.categories)}">无分类</label>
+                                    </td>
+                                    <td>
+                                        <label th:if="${not #lists.isEmpty(post.tags)}"
+                                            th:each="tag : ${post.tags}">
+                                            [[${tag.tagName}]]&nbsp;&nbsp;</label>
+                                        <label th:if="${#lists.isEmpty(post.tags)}">无标签</label>
+                                    </td>
+                                    <td>
+                                    <span class="label" style="background-color: #d6cdcd;"
+                                          th:text="${#lists.size(post.comments)}"></span>
+                                    </td>
+                                    <td>
+                                    <span class="label" style="background-color: #d6cdcd;"
+                                          th:text="${post.postViews}"></span>
+                                    </td>
+                                    <td th:text="${#dates.format(post.postDate, 'yyyy-MM-dd HH:mm')}"></td>
+                                    <td th:switch="${post.postStatus}">
+                                        <th:block th:case="0">
+                                            <a data-pjax="true" th:href="@{/admin/posts/edit(postId=${post.postId})}"
+                                               class="btn btn-info btn-xs" th:text="#{common.btn.edit}"></a>
+                                            <button class="btn btn-danger btn-xs"
+                                                th:attr="data-url=@{/admin/posts/throw(postId=${post.postId}, status=0)}"
+                                                th:data-message="#{common.text.tips.to-recycle-bin}"
+                                            th:text="#{common.btn.recycling}"></button>
+                                        </th:block>
+                                        <th:block th:case="1">
+                                            <a data-pjax="true" th:href="@{/admin/posts/edit(postId=${post.postId})}"
+                                               class="btn btn-info btn-xs " th:text="#{common.btn.edit}"></a>
+                                            <button class="btn btn-primary btn-xs "
+                                                th:attr="data-url=@{/admin/posts/throw(postId=${post.postId}, status=1)}"
+                                                th:data-message="#{common.text.tips.to-release-post}"
+                                                th:text="#{common.btn.release}"></button>
+                                            <button class="btn btn-danger btn-xs "
+                                                th:attr="data-url=@{/admin/posts/throw(postId=${post.postId}, status=1)}"
+                                                th:data-message="#{common.text.tips.to-recycle-bin}"
+                                            th:text="#{common.btn.recycling}"></button>
+                                        </th:block>
+                                        <th:block th:case="2">
+                                            <a data-pjax="true"
+                                               th:href="@{/admin/posts/revert(postId=post.postId, status=2)}"
+                                               class="btn btn-primary btn-xs" th:text="#{common.btn.reduction}"></a>
+                                            <button class="btn btn-danger btn-xs "
+                                                th:attr="data-url=@{/admin/posts/remove(postId=${post.postIdc}, postType=${post.postType})}"
+                                                th:data-message="#{common.text.tips.to-delete}"
+                                            th:text="#{common.btn.delete}"></button>
+                                        </th:block>
+                                    </td>
+                                </tr>
+
+                                <tr th:if="${#lists.isEmpty(posts.content)}">
+                                    <th colspan="7" style="text-align: center"
+                                        th:text="#{common.text.no-data}"></th>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="box-footer clearfix">
+                            <div class="no-margin pull-left">
+                                [(#{admin.pageinfo.text.no})]&nbsp;&nbsp;[[${posts.number+
+                                1}]]&nbsp;&nbsp;/&nbsp;&nbsp;[[${posts.totalPages}]]&nbsp;&nbsp;[(#{admin.pageinfo.text.page})]
+                            </div>
+                            <div class="btn-group pull-right btn-group-sm" role="group">
+                                <a data-pjax="true" th:class="'btn btn-default ' +
+                            (${not posts.hasPrevious()}? 'disabled')"
+                                   th:href="@{/admin/posts(status=${status})}" th:text="#{admin.pageinfo.btn.first}">
+                                </a>
+                                <a data-pjax="true" th:class="'btn btn-default ' +
+                            (${not posts.hasPrevious()}? 'disabled')"
+                                   th:href="@{/admin/posts(status=${status}, page=(${posts.number} - 1))}"
+                                   th:text="#{admin.pageinfo.btn.pre}">
+                                </a>
+                                <a data-pjax="true" th:class="'btn btn-default '+
+                            (${not posts.hasNext()}? 'disabled')"
+                                   th:href="@{/admin/posts(status=${status}, page=(${posts.number} + 1))}"
+                                   th:text="#{admin.pageinfo.btn.next}">
+                                </a>
+                                <a data-pjax="true" th:class="'btn btn-default ' +
+                            (${not posts.hasNext()}? 'disabled')"
+                                   th:href="@{/admin/posts(page=(${posts.totalPages} - 1), status=status)}"
+                                   th:text="#{admin.pageinfo.btn.last}">
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- 删除确认弹出层 -->
+        <div class="modal fade" id="removePostModal">
+            <div class="modal-dialog">
+                <div class="modal-content message_align">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">×</span></button>
+                        <h4 class="modal-title" th:text="#{common.text.tips}"></h4>
+                    </div>
+                    <div class="modal-body">
+                        <p id="message"></p>
+                    </div>
+                    <div class="modal-footer">
+                        <input type="hidden" id="url"/>
+                        <button type="button" class="btn btn-default" data-dismiss="modal"
+                                th:text="#{common.btn.cancel}"></button>
+                        <a onclick="removeIt()" class="btn btn-danger" data-dismiss="modal"
+                           th:text="#{common.btn.define}"></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <th:block th:inline="javascript" th:replace="~{admin/module/footer :: scriptEntry(~{::script})}">
+        <script type="application/javascript" id="footer_script">
+            function modelShow(url, message) {
+                $('#url').val(url);
+                $('#message').html(message);
+                $('#removePostModal').modal();
+            }
+            $('td button.btn').on('click', function(event) {
+                modelShow($(this).data('url'), $(this).data('message'));
+            });
+
+            function removeIt() {
+                let url = $.trim($("#url").val());
+                /*[# th:if=${option['admin_pjax']} ]*/
+                pjax.loadUrl(url);
+                /*[/]*/
+                /*[# th:unless=${option['admin_pjax']} ]*/
+                window.location.href = url;
+                /*[/]*/
+            }
+        </script>
+    </th:block>
+</body>
+</html>

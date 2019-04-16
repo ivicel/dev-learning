@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <p>User: <span th:text="${user}" th:unless="${user.username == null}"></span></p>
+    <p>Request params: <span th:text="${#request.getParameter('username')}"></span></p>
+    <p>session: <span th:text="${@springTemplateEngine}"></span></p>
+</body>
+</html>

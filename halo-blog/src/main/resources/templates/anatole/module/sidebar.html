@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<th:block th:fragment="sidebar">
+    <div class="sidebar animated fadeInDown">
+        <div class="logo-title">
+            <div class="title">
+                <img th:src="${option['blog_logo']}?: ${#servletContext.contextPath} +
+                    '/anatole/source/images/logo@2x.png'"
+                    th:style="'width:127px;' +
+                    ${option['anatole_style_avatar_circle']}?: 'border-radius:50%;'"/>
+                <h3>
+                    <a th:href="@{/}" th:text="${option['blog_title']}?: 'ANATOLE'"></a>
+                </h3>
+                <div class="description">
+                    <p th:if="${option['anatole_style_hitokoto']}" id="yiyan">获取中...</p>
+                    <p th:unless="${option['anatole_style_hitokoto']}"
+                        th:text="${user}? (${user['userDesc']}?: 'A other Halo theme')">
+                    </p>
+                </div>
+            </div>
+        </div>
+        <!--<#include "social-list.ftl">-->
+        <div class="footer">
+            <a target="_blank" href="#">
+                <!--<#&#45;&#45; 不允许修改该主题信息，也不能删除。 &ndash;&gt;-->
+                <span>Designed by </span>
+                <a href="https://www.caicai.me">CaiCai</a>
+                <!--<#&#45;&#45; 虽然Halo使用了宽松的GPL协议，但开发不易，希望您可以保留一下版权声明。笔芯~ &ndash;&gt;-->
+                <div class="by_halo">
+                    <a href="https://github.com/ruibaby/halo" target="_blank">Proudly published with Halo&#65281;</a>
+                </div>
+                <div class="footer_text" th:text="${option['blog_footer_info']}">
+                </div>
+            </a>
+        </div>
+    </div>
+</th:block>
+</body>
+</html>

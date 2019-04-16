@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mmall.dao.PostMapper">
+    <resultMap id="BaseResultMap" type="com.mmall.controller.Post">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="body" jdbcType="VARCHAR" property="body"/>
+        <result column="body_html" jdbcType="VARCHAR" property="bodyHtml"/>
+        <result column="timestamp" jdbcType="TIMESTAMP" property="date"/>
+        <result column="author_id" jdbcType="VARCHAR" property="authorId"/>
+    </resultMap>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        select id, body, body_html, `timestamp`, author_id from posts group by id
+    </select>
+
+</mapper>

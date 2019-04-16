@@ -1,0 +1,34 @@
+server:
+    port: 8088
+    use-forward-headers: true
+    servlet:
+        context-path: /blog
+
+
+spring:
+    jpa:
+        generate-ddl: true
+        hibernate:
+            ddl-auto: update
+        show-sql: true
+
+        properties:
+            hibernate:
+                connection: charSet=UTF-8
+
+    devtools:
+        livereload:
+            port: 9527
+
+    datasource:
+        druid:
+            driver-class-name: com.mysql.cj.jdbc.Driver
+            url: jdbc:mysql://localhost:3306/halo_blog?useUnicode=true&useSSL=false&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
+            username: root
+            password: 123456
+    thymeleaf:
+        cache: false
+
+
+halo:
+    image-upload-directory: /tmp/halo

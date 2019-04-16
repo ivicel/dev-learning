@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="info.ivicel.tumoblog.admin.mapper.ArticleTagsMapper">
+    <resultMap id="BaseResultMap" type="info.ivicel.tumoblog.admin.entity.ArticleTags">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="article_id" jdbcType="BIGINT" property="articleId"/>
+        <result column="tags_id" jdbcType="BIGINT" property="tagsId"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, article_id, tags_id
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from article_tags
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+
+    <select id="findAllTagsByArticleId" resultType="info.ivicel.tumoblog.admin.entity.Tag">
+        select t.id, t.name from `tags` as t join `article_tags` as art on
+        t.id = art.tags_id where art.article_id = #{articleId}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete
+        from article_tags
+        where id = #{id,jdbcType=BIGINT}
+    </delete>
+
+    <delete id="deleteByArticleId">
+        delete from `article_tags` where article_id = #{articleId}
+    </delete>
+
+    <delete id="deleteByArticleIdAndTagId">
+        delete from `article_tags` where article_id = #{articleId} and
+        tags_id in
+        <foreach collection="tags" item="tag" separator="," open="(" close=")">
+            #{tag.id}
+        </foreach>
+    </delete>
+
+    <insert id="insert" parameterType="info.ivicel.tumoblog.admin.entity.ArticleTags">
+        insert into article_tags (id, article_id, tags_id)
+        values (#{id,jdbcType=BIGINT}, #{articleId,jdbcType=BIGINT}, #{tagsId,jdbcType=BIGINT})
+    </insert>
+    <insert id="insertSelective" parameterType="info.ivicel.tumoblog.admin.entity.ArticleTags">
+        insert into article_tags
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="articleId != null">
+                article_id,
+            </if>
+            <if test="tagsId != null">
+                tags_id,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="articleId != null">
+                #{articleId,jdbcType=BIGINT},
+            </if>
+            <if test="tagsId != null">
+                #{tagsId,jdbcType=BIGINT},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="info.ivicel.tumoblog.admin.entity.ArticleTags">
+        update article_tags
+        <set>
+            <if test="articleId != null">
+                article_id = #{articleId,jdbcType=BIGINT},
+            </if>
+            <if test="tagsId != null">
+                tags_id = #{tagsId,jdbcType=BIGINT},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="info.ivicel.tumoblog.admin.entity.ArticleTags">
+        update article_tags
+        set article_id = #{articleId,jdbcType=BIGINT},
+            tags_id    = #{tagsId,jdbcType=BIGINT}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <insert id="insertBulk">
+        insert ignore into `article_tags` (article_id, tags_id) values
+        <foreach collection="tags" item="tag" separator=",">
+            (#{articleId}, #{tag.id})
+        </foreach>
+    </insert>
+</mapper>

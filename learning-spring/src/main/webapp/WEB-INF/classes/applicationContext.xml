@@ -1,0 +1,38 @@
+<?xml version="1.1" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <!--<context:property-placeholder location="classpath:db.properties,-->
+                                            <!--classpath:server.properties" />-->
+    <!--<context:annotation-config />-->
+    <!--<context:component-scan base-package="info.ivicel.hello" resource-pattern="*Config.class"/>-->
+    <!--<aop:aspectj-autoproxy />-->
+    <bean class="info.ivicel.hello.Person">
+        <property name="age" value="17" />
+        <property name="name" value="adf" />
+        <property name="iDCode" value="11237" />
+    </bean>
+    <bean class="info.ivicel.hello.Boss" />
+    <!--<bean id="tx" class="info.ivicel.hello.TransactionManager"/>-->
+    <!--<aop:config>-->
+        <!--<aop:aspect ref="tx">-->
+            <!--<aop:pointcut id="pointCut" expression="execution(* info.ivicel.hello..*(..))"/>-->
+            <!--<aop:before method="onOpen" pointcut-ref="pointCut" />-->
+            <!--<aop:after-returning method="onCommit" pointcut-ref="pointCut" />-->
+            <!--<aop:after-throwing method="onError" pointcut-ref="pointCut" />-->
+            <!--<aop:after method="onClose" pointcut-ref="pointCut" />-->
+        <!--</aop:aspect>-->
+    <!--</aop:config>-->
+
+    
+    <!--<import resource="classpath:springmvc.xml"/>-->
+    
+</beans>

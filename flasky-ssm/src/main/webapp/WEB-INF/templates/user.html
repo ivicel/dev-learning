@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Flasky - [[${user.username}]]</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet" th:href="@{/static/css/bootstrap.min.css}">
+    <link href="/static/css/bootstrap-theme.min.css" rel="stylesheet" th:href="@{/static/css/bootstrap-theme.min.css}">
+    <link rel="shortcut icon" th:href="@{/static/favicon.ico}" href="/static/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="/static/styles.css" th:href="@{/static/styles.css}">
+</head>
+<body>
+    <div th:replace="~{nav :: nav}"></div>
+    <div class="container">
+        <div class="page-header">
+            <img class="img-rounded profile-thumbnail"
+                 src="https://secure.gravatar.com/avatar/4d3eb851fa7fc09d13c5e53ae0b0158f?s=256&d=identicon&r=g"
+                 th:src="${user.getAvatar(256)}">
+            <div class="profile-header">
+                <h1 th:text="${user.username}">Ivicel</h1>
+                <!--{% if user.name or user.location %}-->
+                <p>
+                    <span th:text="${user.name}">{{ user.name }}</span><br>
+                    from <a href="http://maps.google.com/?q=silly" th:a="'http://maps.google.com/?q=' + ${user.location}" th:text="${user.location}">{{ user.location }}</a><br>
+                </p>
+                <!--{% if current_user.is_administrator() %}-->
+                <p><a th:href="'mailto:' + ${user.email}" th:text="${user.email}">{{ user.email }}</a></p>
+                <!--{% endif %}-->
+                <p th:text="${user.aboutMe}">{{ user.about_me }}</p>
+                <p>Member since {{ moment(user.member_since).format('L') }}. Last seen {{
+                    moment(user.last_seen).fromNow()
+                    }}.</p>
+                <p>{{ user.posts.count() }} blog posts. {{ user.comments.count() }} comments.</p>
+                <p>
+                    <!--{% if current_user.can(Permission.FOLLOW) and user != current_user %}-->
+                    <!--{% if not current_user.is_following(user) %}-->
+                    <a href="{{ url_for('.follow', username=user.username) }}" class="btn btn-primary">Follow</a>
+                    <!--{% else %}-->
+                    <a href="{{ url_for('.unfollow', username=user.username) }}" class="btn btn-default">Unfollow</a>
+                    <!--{% endif %}-->
+                    <!--{% endif %}-->
+                    <a href="{{ url_for('.followers', username=user.username) }}">Followers: <span class="badge">{{ user.followers.count() - 1 }}</span></a>
+                    <a href="{{ url_for('.followed_by', username=user.username) }}">Following: <span class="badge">{{ user.followed.count() - 1 }}</span></a>
+                    <!--{% if current_user.is_authenticated and user != current_user and user.is_following(current_user) %}-->
+                    | <span class="label label-default">Follows you</span>
+                    <!--{% endif %}-->
+                </p>
+                <p>
+                    <!--{% if user == current_user %}-->
+                    <a class="btn btn-default" href="{{ url_for('.edit_profile') }}">Edit Profile</a>
+                    <!--{% endif %}-->
+                    <!--{% if current_user.is_administrator() %}-->
+                    <a class="btn btn-danger" href="{{ url_for('.edit_profile_admin', id=user.id) }}">Edit Profile
+                        [Admin]</a>
+                    <!--{% endif %}-->
+                </p>
+            </div>
+        </div>
+        <h3>Posts by [[${user.username }]]</h3>
+        <th:block th:insert="post.html(posts=${user.posts})"/>
+        <!--{% if pagination %}-->
+        <div class="pagination">
+            {{ macros.pagination_widget(pagination, '.user', username=user.username) }}
+        </div>
+        <!--{% endif %}-->
+    </div>
+    <script src="/static/js/jquery.min.js" th:src="@{/static/js/jquery.min.js}"></script>
+    <script src="/static/js/bootstrap.min.js" th:src="@{/static/js/bootstrap.min.js}"></script>
+</body>
+</html>

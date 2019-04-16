@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="info.ivicel.web.dao.PostDao">
+    <resultMap id="BaseResultMap" type="info.ivicel.web.entity.Post">
+        <id property="id" column="id"/>
+        <result property="body" column="body"/>
+        <result property="bodyHtml" column="body_html"/>
+        <result property="timestamp" column="timestamp"/>
+        <result property="authorId" column="author_id"/>
+        <association property="author" javaType="info.ivicel.web.entity.User">
+            <result property="email" column="email"/>
+            <result property="username" column="username"/>
+            <!--<result property="roleId" column="role_id"/>-->
+            <result property="confirmed" column="confirmed"/>
+            <result property="name" column="name"/>
+            <result property="location" column="location"/>
+            <result property="aboutMe" column="about_me"/>
+            <result property="memberSince" column="member_since"/>
+            <result property="lastSeen" column="last_seen"/>
+            <result property="avatarHash" column="avatar_hash"/>
+        </association>
+    </resultMap>
+
+    <sql id="base_column">
+        p.id, p.body, p.body_html, p.timestamp, p.author_id,
+        u.email, u.username, u.confirmed, u.name, u.location, u.about_me, u.member_since, u.last_seen, u.avatar_hash
+    </sql>
+
+    <select id="findById" resultMap="BaseResultMap">
+        SELECT <include refid="base_column"/>
+        FROM posts WHERE id = #{id}
+    </select>
+
+    <select id="findByAuthorId" resultMap="BaseResultMap">
+        SELECT <include refid="base_column"/>
+        FROM posts WHERE id = #{authorId}
+    </select>
+    <select id="findAllPost" resultMap="BaseResultMap">
+        SELECT <include refid="base_column"/> FROM `posts` p JOIN `users` u
+        ON p.author_id = u.id LIMIT 1, 100;
+    </select>
+</mapper>

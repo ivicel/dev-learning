@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <aside class="main-sidebar" th:fragment="sidebar">
+        <section class="sidebar">
+            <div class="user-panel">
+                <div class="pull-left image">
+                    <img th:src="${#servletContext.contextPath} + (${user.userAvatar} ?
+                        ${user.userAvatar} : '/static/halo-backend/images/default.png')"
+                        class="img-circle" alt="User Image">
+                </div>
+                <div class="pull-left info">
+                    <p th:text="${user.userDisplayName}"></p>
+                    <a data-pjax="true" th:href="@{/admin/profile}">
+                    <i class="fa fa-circle text-success"></i>[[#{admin.menu.profile}]]</a>
+                </div>
+            </div>
+            <ul class="sidebar-menu" data-widget="tree">
+                <li class="header">MENUS</li>
+                <li>
+                    <a data-pjax="true" th:href="@{/admin}">
+                        <i class="fa fa-dashboard"></i>
+                        <span th:text="#{admin.menu.dashboard}"></span>
+                    </a>
+                </li>
+                <li class="treeview">
+                    <a data-pjax="true" href="javascript:void(0)">
+                        <i class="fa fa-book"></i>
+                        <span th:text="#{admin.menu.posts}"></span>
+                        <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
+                    </a>
+                    <ul class="treeview-menu" style="">
+                        <li><a data-pjax="true" th:href="@{/admin/posts}"><i class="fa fa-circle-o"></i>[[#{admin.menu.all-posts}]]</a></li>
+                        <li><a data-pjax="true" th:href="@{/admin/posts/write}"><i class="fa fa-circle-o"></i>[[#{admin.menu.new-post}]]</a></li>
+                        <li><a data-pjax="true" th:href="@{/admin/category}"><i class="fa fa-circle-o"></i>[[#{admin.menu.categories}]]</a></li>
+                        <li><a data-pjax="true" th:href="@{/admin/tag}"><i class="fa fa-circle-o"></i>[[#{admin.menu.tags}]]</a></li>
+                    </ul>
+                </li>
+                <li class="treeview">
+                    <a data-pjax="true" href="javascript:void(0)">
+                        <i class="fa fa-desktop"></i>
+                        <span th:text="#{admin.menu.pages}"></span>
+                        <span class="pull-right-container">
+                        <i class="fa fa-angle-left pull-right"></i>
+                    </span>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li><a data-pjax="true" th:href="@{/admin/page}"><i class="fa fa-circle-o"></i>[[#{admin.menu.all-pages}]]</a></li>
+                        <li><a data-pjax="true" th:href="@{/admin/page/new}"><i class="fa fa-circle-o"></i>[[#{admin.menu.new-page}]]</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a data-pjax="true" th:href="@{/admin/attachments}">
+                        <i class="fa fa-picture-o"></i>
+                        <span th:text="#{admin.menu.attachments}"></span>
+                    </a>
+                </li>
+                <li>
+                    <a data-pjax="true" th:href="@{/admin/comments}">
+                        <i class="fa fa-comment"></i>
+                        <span th:text="#{admin.menu.comments}"></span>
+                        <span class="pull-right-container">
+                            <span th:if="${not #lists.isEmpty(newComments)}" class="label label-primary pull-right" th:text="${#lists.size(newComments)}"></span>
+                        </span>
+                    </a>
+                </li>
+                <li class="treeview">
+                    <a data-pjax="true" href="javascript:void(0)">
+                        <i class="fa fa-paint-brush"></i>
+                        <span th:text="#{admin.menu.appearance}"></span>
+                        <span class="pull-right-container">
+                        <i class="fa fa-angle-left pull-right"></i>
+                    </span>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li><a data-pjax="true" th:href="@{/admin/themes}"><i class="fa fa-circle-o"></i>[[#{admin.menu.themes}]]</a></li>
+                        <li><a data-pjax="true" th:href="@{/admin/menus}"><i class="fa fa-circle-o"></i>[[#{admin.menu.menus}]]</a></li>
+                        <li><a data-pjax="true" th:href="@{/admin/themes/editor}"><i class="fa fa-circle-o"></i>[[#{admin.menu.edit-theme}]]</a></li>
+                    </ul>
+                </li>
+                <li class="treeview">
+                    <a data-pjax="true" href="javascript:void(0)">
+                        <i class="fa fa-user-o"></i>
+                        <span th:text="#{admin.menu.user}"></span>
+                        <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li><a data-pjax="true" th:href="@{/admin/profile}"><i class="fa fa-circle-o"></i>[[#{admin.menu.profile}]]</a></li>
+                    </ul>
+                </li>
+                <li class="treeview">
+                    <a data-pjax="true" href="javascript:void(0)">
+                        <i class="fa fa-cog"></i>
+                        <span th:text="#{admin.menu.settings}"></span>
+                        <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li><a data-pjax="true" th:href="@{/admin/option}"><i class="fa fa-circle-o"></i>[[#{admin.menu.blog-settings}]]</a></li>
+                        <li><a data-pjax="true" th:href="@{/admin/backup}"><i class="fa fa-circle-o"></i>[[#{admin.menu.blog-backup}]]</a></li>
+                        <li><a data-pjax="true" th:href="@{/admin/tools}"><i class="fa fa-circle-o"></i>[[#{admin.menu.tools}]]</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </section>
+    </aside>
+</body>
+</html>

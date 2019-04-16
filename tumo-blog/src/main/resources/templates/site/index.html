@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{site/common/common_head :: commonHead(~{::title}, ~{::link})}">
+    <title>Tumo Blog Home</title>
+    <link rel="stylesheet" th:href="@{/static/css/index.css}">
+</head>
+<body class="bg-grey" gtools_scp_screen_capture_injected="true">
+    <div th:replace="site/header :: header"></div>
+<div id="main-page-app">
+    <div class="main-content index-page clearfix">
+        <div class="post-lists">
+            <div class="post-lists-body">
+                <div class="post-list-item" v-for="post of posts">
+                    <div class="post-list-item-container">
+                        <div class="item-thumb bg-deepgrey"
+                             :style="{background: 'url(' + buildPath(post.titlePic) + ')'}"></div>
+                        <a :href="buildPath('/article/' + post.id)">
+                            <div class="item-desc">
+                                <p v-html="post.content.substring(0, 80)"></p>
+                            </div>
+                        </a>
+                        <div class="item-slant reverse-slant bg-deepgrey"></div>
+                        <div class="item-slant"></div>
+                        <div class="item-label">
+                            <div class="item-title">
+                                <a :href="buildPath('/article/' + post.id)">{{ post.title }}</a>
+                            </div>
+                            <div class="item-meta clearfix">
+                                <div class="item-meta-ico bg-ico-note"
+                                    :style="{background: 'url(' + buildPath('/static/public/bg-ico.png') +
+                                     ') no-repeat', backgroundSize: '40px auto'}"></div>
+                                <div class="item-meta-cat">
+                                    <a :href="buildPath('/category/' + post.category.id)">{{ post.category.name }}</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- pagination -->
+        <div class="lists-navigator clearfix">
+            <el-pagination :total="totalPage" :page-size="pageSize" :current-page.sync="pageNum"
+                layout="prev, pager, next" background="false"
+                @current-change="onPageChange"></el-pagination>
+        </div>
+    </div>
+</div>
+    <div th:replace="~{site/footer :: footer}"></div>
+    <th:block th:replace="~{site/common/onload_js :: onloadJS(~{::script})}">
+        <script th:src="@{/static/js/homepage.js}"></script>
+    </th:block>
+</body>
+</html>

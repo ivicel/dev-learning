@@ -1,0 +1,39 @@
+plugins {
+    id 'java'
+}
+
+group 'info.ivicel'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework:spring-context:5.2.0.RELEASE'
+    implementation 'org.springframework:spring-context-support:5.2.0.RELEASE'
+    implementation 'org.springframework:spring-core:5.2.0.RELEASE'
+    implementation 'org.springframework:spring-beans:5.2.0.RELEASE'
+    implementation 'org.springframework:spring-aop:5.2.0.RELEASE'
+
+    implementation('org.apache.curator:curator-recipes:2.13.0') {
+        exclude group: 'org.apache.zookeeper'
+    }
+    implementation('org.apache.curator:curator-framework:2.13.0') {
+        exclude group: 'org.apache.zookeeper'
+    }
+    implementation('org.apache.curator:curator-client:2.13.0') {
+        exclude group: 'org.apache.zookeeper'
+    }
+
+    implementation 'org.apache.dubbo:dubbo:2.7.4.1'
+    implementation 'org.apache.zookeeper:zookeeper:3.4.14'
+    implementation 'com.101tec:zkclient:0.11'
+
+//    implementation "org.apache.dubbo:dubbo-rpc-api:2.7.4"
+    implementation project(":dubbo-service-interface")
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}

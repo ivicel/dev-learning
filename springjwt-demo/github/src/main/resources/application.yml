@@ -1,0 +1,14 @@
+github:
+    client:
+        clientId: 309fdd3e7466a5d842ba
+        clientSecret: ad17184095bc04ab5beddf0cd6b93c5ce13dd871
+        accessTokenUri: https://github.com/login/oauth/access_token
+        userAuthorizationUri: https://github.com/login/oauth/authorize
+
+security:
+    oauth2:
+        client:
+            client-id: acme
+            client-secret: acmesecret
+            scope: read,write
+            auto-approve-scopes: '.*'

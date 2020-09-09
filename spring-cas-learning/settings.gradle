@@ -1,0 +1,4 @@
+rootProject.name = 'spring-cas-learning'
+
+include ":cas-client"
+include ":cas-server"

@@ -1,0 +1,16 @@
+spring:
+    datasource:
+        druid:
+            username: root
+            driver-class-name: com.mysql.cj.jdbc.Driver
+            password: 123456
+            url: jdbc:mysql://localhost:3306/shirojwt?characterEncoding=UTF-8&useSSL=false
+        type: com.alibaba.druid.pool.DruidDataSource
+
+    jpa:
+        show-sql: true
+        hibernate:
+            ddl-auto: update
+
+
+

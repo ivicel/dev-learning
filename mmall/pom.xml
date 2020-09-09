@@ -12,7 +12,7 @@
         <alibaba-druid.version>1.1.12</alibaba-druid.version>
         <thymeleaf-spring5.version>3.0.11.RELEASE</thymeleaf-spring5.version>
         <mybatis-spring.version>2.0.0</mybatis-spring.version>
-        <jackson-databind.version>2.9.8</jackson-databind.version>
+        <jackson-databind.version>2.9.10.5</jackson-databind.version>
         <servlet-api.version>4.0.1</servlet-api.version>
         <apache-commons-lang3.version>3.8.1</apache-commons-lang3.version>
         <apache-commons-collections4.version>4.3</apache-commons-collections4.version>
